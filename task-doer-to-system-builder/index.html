@@ -514,6 +514,21 @@ footer a { color: var(--deep); }
     <p>Every Claude session needs context: how the org is set up, where things live, the team's conventions. The system in this doc means that context is loaded once and reused - skills, rules, and the knowledge graph stay in Claude's working memory across sessions. The less time Claude spends relearning, the more it spends shipping.</p>
 
     <div class="te-section-head">
+      <span class="kicker">How the structure works</span>
+      <span class="rule"></span>
+    </div>
+
+    <p>Each layer of context is loaded only when needed, not on every turn:</p>
+    <ul>
+      <li><strong>CLAUDE.md</strong> - a thin index of pointers, the only file loaded every session</li>
+      <li><strong>12 topic rule files</strong> in <code>.claude/rules/</code> - field development, validation rules, permission sets, data imports, etc. Each loaded only when the work touches the topic</li>
+      <li><strong>80+ skills</strong> - loaded only when their trigger fires (a slash command, a keyword in the task)</li>
+      <li><strong>lat.md knowledge graph</strong> - searched semantically; returns only the matching section, not the whole graph</li>
+      <li><strong>Memory files</strong> - persisted across sessions, recalled when the topic comes up</li>
+    </ul>
+    <p>That just-in-time shape is the efficiency mechanism. Nothing is preloaded; almost nothing gets re-read. Each always-on rule is graded on cost vs trigger frequency; deep-reference ones live as on-demand skills instead. The discipline keeps the always-on budget lean - the most recent grading cut about <strong>14k tokens</strong> off every session's startup.</p>
+
+    <div class="te-section-head">
       <span class="kicker">Where the work goes</span>
       <span class="rule"></span>
     </div>
@@ -612,7 +627,7 @@ footer a { color: var(--deep); }
       <div class="layer-body">
         <h2 class="layer-title">Project rules and memory</h2>
         <p>Durable conventions that survive across sessions and even across team members.</p>
-<ul><li>24+ rule files in <a href="https://github.com/Spark-Advisors/salesforce-spark/tree/main/.claude/rules" target="_blank" rel="noopener">.claude/rules/</a> codify the right way to do things here: how to author a field, how to scope a permset, the three-layer FlexiPage visibility pattern, data-import quirks of the Bulk API, layout deploy mechanics, validation rule exemption patterns.</li><li>Memory files persist user preferences, project state, completed-work history, and feedback per session. When Claude makes a mistake once and gets corrected, the correction is stored. Permanently.</li><li>Per-sprint memory indexes shipped work so &quot;like we did for X&quot; resolves without re-reading Shortcut.</li></ul>
+<ul><li>12 always-on rule files in <a href="https://github.com/Spark-Advisors/salesforce-spark/tree/main/.claude/rules" target="_blank" rel="noopener">.claude/rules/</a> codify the conventions that fire on most work: how to author a field, scope a permset, the three-layer FlexiPage visibility pattern, data-import quirks of the Bulk API, validation rule exemption patterns. Another 80+ on-demand skills cover deep-reference patterns that only load when their topic comes up.</li><li>Memory files persist user preferences, project state, completed-work history, and feedback per session. When Claude makes a mistake once and gets corrected, the correction is stored. Permanently.</li><li>Per-sprint memory indexes shipped work so &quot;like we did for X&quot; resolves without re-reading Shortcut.</li></ul>
 <p><strong>Net effect: onboarding the AI to our environment happens once, not every conversation.</strong></p>
         
       </div>
