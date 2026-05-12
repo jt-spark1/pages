@@ -510,6 +510,31 @@ html { scroll-behavior: smooth; }
 .toc .toc-sub { padding-left: 8px; margin: 2px 0 4px; border-left: 1px dashed var(--lavender); }
 .toc .toc-sub a { font-size: 10.5px; padding: 2px 6px; color: var(--mute); }
 .toc .toc-sub a.active { color: var(--deep); }
+.toc-top {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--lavender);
+}
+.toc-top button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--deep);
+  background: transparent;
+  border: 1px solid var(--lavender);
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.toc-top button:hover { background: var(--yellow); border-color: var(--deep); }
+.toc-top .arrow { font-size: 13px; line-height: 1; }
 [id="token-economy"], [id="stack"], [id="sprints"], [id="discipline"], [id="whats-next"],
 article.layer-card { scroll-margin-top: 24px; }
 @media (max-width: 1280px) {
@@ -538,6 +563,11 @@ article.layer-card { scroll-margin-top: 24px; }
     <li><a href="#discipline">Discipline</a></li>
     <li><a href="#whats-next">What's next</a></li>
   </ol>
+  <div class="toc-top">
+    <button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Back to top">
+      <span class="arrow">&uarr;</span><span>Back to top</span>
+    </button>
+  </div>
 </nav>
 
 <header class="hero">
