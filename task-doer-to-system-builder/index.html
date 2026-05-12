@@ -510,23 +510,7 @@ footer a { color: var(--deep); }
   <section class="token-economy">
     <span class="kicker">The token economy</span>
     <h2>How the system pays back in real time</h2>
-    <p class="lead"><strong>The compounding 6%.</strong> That share of every Claude session goes to building the system itself - new skills, rules, knowledge-graph entries. It's the only category of spend where more now means less later, because each new artifact discounts the cost of every future ticket that touches the same area. Everything else gets cheaper because of it.</p>
-    <p>Every Claude session needs context: how the org is set up, where things live, the team's conventions. The system in this doc means that context is loaded once and reused - skills, rules, and the knowledge graph stay in Claude's working memory across sessions. The less time Claude spends relearning, the more it spends shipping.</p>
-
-    <div class="te-section-head">
-      <span class="kicker">How the structure works</span>
-      <span class="rule"></span>
-    </div>
-
-    <p>Each layer of context is loaded only when needed, not on every turn:</p>
-    <ul>
-      <li><strong>CLAUDE.md</strong> - a thin index of pointers, the only file loaded every session</li>
-      <li><strong>12 topic rule files</strong> in <code>.claude/rules/</code> - field development, validation rules, permission sets, data imports, etc. Each loaded only when the work touches the topic</li>
-      <li><strong>80+ skills</strong> - loaded only when their trigger fires (a slash command, a keyword in the task)</li>
-      <li><strong>lat.md knowledge graph</strong> - searched semantically; returns only the matching section, not the whole graph</li>
-      <li><strong>Memory files</strong> - persisted across sessions, recalled when the topic comes up</li>
-    </ul>
-    <p>That just-in-time shape is the efficiency mechanism. Nothing is preloaded; almost nothing gets re-read. A weekly auto-audit (<code>/claude-efficiency-pulse</code>, every Monday at 7am) scans the past 7 days of sessions for drift - long sessions, missed knowledge-graph briefings, repeated re-reads, rule-load patterns - and posts the findings to Slack. The discipline keeps the always-on budget lean: the most recent rule-cost grading cut about <strong>14k tokens</strong> off every session's startup.</p>
+    <p class="lead"><strong>~6% of every Claude session</strong> goes to building the system itself - new skills, rules, knowledge-graph entries. It's the only category where more spend now means less spend later. Every other category gets cheaper because of it.</p>
 
     <div class="te-section-head">
       <span class="kicker">Where the work goes</span>
@@ -556,7 +540,21 @@ footer a { color: var(--deep); }
       </div>
     </div>
 
-    <p>I integrated context-mode into my workflow this past week - a tool that processes large outputs in the background and returns only the summary. It already pulled the &ldquo;gathering context&rdquo; share from <strong>~17% to ~15%</strong> in one week.</p>
+    <p>I just integrated context-mode into my workflow - a tool that processes large outputs in the background and returns only the summary. In one week it pulled the &ldquo;gathering context&rdquo; share from <strong>~17% to ~15%</strong>.</p>
+
+    <div class="te-section-head">
+      <span class="kicker">How the structure works</span>
+      <span class="rule"></span>
+    </div>
+
+    <ul>
+      <li><strong>CLAUDE.md</strong> - thin pointer index, the only file loaded every session</li>
+      <li><strong>12 topic rules</strong> - field dev, perms, data imports, etc. Load when the work touches them</li>
+      <li><strong>80+ skills</strong> - load when their trigger fires</li>
+      <li><strong>lat.md knowledge graph</strong> - searched semantically; returns the matching section only</li>
+      <li><strong>Memory files</strong> - persisted across sessions; recalled when the topic comes up</li>
+    </ul>
+    <p>Nothing is preloaded; almost nothing gets re-read. A weekly auto-audit (<code>/claude-efficiency-pulse</code>, every Monday at 7am) scans the past 7 days for drift and posts findings to Slack. Acting on those findings cut about <strong>14k tokens</strong> off every session's startup.</p>
   </section>
 
   <section>
