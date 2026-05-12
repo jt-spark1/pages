@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integration Data Map · Spark Advisors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surface */
+    --white:        #FFFFFF;
+    --panel:        #F7F7F4;
+    --hairline:     #E2E2DE;
+    --hairline-soft:#EFEFEC;
+
+    /* Ink */
+    --navy:         #0F2849;
+    --ink:          #1A1A1A;
+    --muted:        #5A5A5A;
+    --subtle:       #8C8C8C;
+    --ghost:        #BFBFBF;
+
+    /* Sparing accent */
+    --accent:       #B83A2E;
+    --accent-soft:  rgba(184,58,46,0.08);
+
+    /* System hues - low-saturation, professional */
+    --hs:    #1F3A5F;  /* deep blue */
+    --luma:  #8E6042;  /* muted brick */
+    --clay:  #5F6E48;  /* olive */
+    --dp:    #5F4865;  /* plum */
+    --eac:   #45627A;  /* slate */
+    --sd:    #94733E;  /* gold */
+    --fa:    #888377;  /* warm grey */
+
+    --sans:  "IBM Plex Sans", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono:  "IBM Plex Mono", "SF Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: #ECECE8; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .page {
+    max-width: 1480px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 48px clamp(28px, 4vw, 64px) 56px;
+  }
+
+  /* ============================================== */
+  /* HEADER                                          */
+  /* ============================================== */
+  .header {
+    border-top: 4px solid var(--navy);
+    padding-top: 16px;
+    margin-bottom: 36px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+  }
+  .header .kicker {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    margin: 0;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: clamp(28px, 3vw, 38px);
+    color: var(--navy);
+    letter-spacing: -0.012em;
+    line-height: 1.1;
+  }
+  .header .meta {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    line-height: 1.6;
+  }
+  .header .meta strong { color: var(--navy); font-weight: 500; }
+
+  /* Subhead context line */
+  .context {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 100ch;
+    margin: 0 0 44px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .context strong { color: var(--ink); font-weight: 500; }
+  .context .navy { color: var(--navy); font-weight: 500; }
+
+  /* ============================================== */
+  /* CHART                                           */
+  /* ============================================== */
+  .chart {
+    --label-col: 220px;
+    --gap: 6px;
+    display: grid;
+    grid-template-columns: var(--label-col) repeat(8, minmax(80px, 1fr));
+    gap: 0;
+    min-width: 1100px;
+  }
+  .chart-wrap { overflow-x: auto; padding-bottom: 8px; }
+
+  /* Group banner labels (ABOVE THE LINE / BELOW THE LINE) */
+  .group-banner {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: var(--label-col) 1fr;
+    align-items: end;
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+  .group-banner.below {
+    border-bottom: none;
+    border-top: 1px solid var(--hairline-soft);
+    padding: 14px 0 0;
+    align-items: start;
+  }
+  .group-banner .left {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+  .group-banner .right {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: left;
+    padding-left: 8px;
+  }
+
+  /* System row */
+  .sys-label {
+    grid-column: 1;
+    padding: 14px 16px 14px 0;
+    border-bottom: 1px solid var(--hairline-soft);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .sys-label .row1 {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+  .sys-label .name {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    letter-spacing: -0.004em;
+  }
+  .sys-label .mode {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--subtle);
+  }
+  .sys-label .role {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+  .sys-label .accent-bar {
+    width: 24px; height: 3px;
+    margin-bottom: 8px;
+    background: currentColor;
+  }
+
+  /* Chip (one per stage column) */
+  .chip {
+    border-bottom: 1px solid var(--hairline-soft);
+    padding: 14px 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70px;
+  }
+  /* Light vertical column rules for column alignment */
+  .chip:not(:last-child) {
+    background-image: linear-gradient(to right, transparent calc(100% - 1px), var(--hairline-soft) calc(100% - 1px));
+  }
+  .chip .dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--ghost);
+    opacity: 0.32;
+    border: 1px solid transparent;
+  }
+  .chip.active .dot {
+    background: currentColor;
+    opacity: 1;
+    box-shadow: 0 0 0 4px rgba(15, 40, 73, 0.06);
+  }
+  /* Special chip annotation */
+  .chip .verb {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--sans);
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
+    color: var(--subtle);
+    white-space: nowrap;
+    font-weight: 500;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  .chip.active .verb { color: currentColor; opacity: 0.85; }
+  /* Fathom chip: dashed hollow when "active" since it isn't synced */
+  .chip.ghosted .dot {
+    background: transparent;
+    opacity: 1;
+    border: 1.5px dashed currentColor;
+  }
+
+  /* per-row coloring (the lane sets its own --row-color) */
+  .row-hs   { color: var(--hs);   }
+  .row-luma { color: var(--luma); }
+  .row-clay { color: var(--clay); }
+  .row-dp   { color: var(--dp);   }
+  .row-eac  { color: var(--eac);  }
+  .row-sd   { color: var(--sd);   }
+  .row-fa   { color: var(--fa);   }
+
+  /* ============================================== */
+  /* TIMELINE AXIS (centerpiece)                     */
+  /* ============================================== */
+  .axis-band {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: var(--label-col) repeat(8, minmax(80px, 1fr));
+    padding: 20px 0 22px;
+    background:
+      linear-gradient(to bottom, var(--white) 0%, var(--panel) 8%, var(--panel) 92%, var(--white) 100%);
+    border-top: 2px solid var(--navy);
+    border-bottom: 2px solid var(--navy);
+    position: relative;
+    margin: 6px 0;
+  }
+  .axis-band::before {
+    content: "Salesforce · The record layer · 8 funnel stages, top of funnel through Lead conversion";
+    position: absolute;
+    top: 6px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+  .axis-label {
+    grid-column: 1;
+    align-self: center;
+    padding-right: 16px;
+    text-align: right;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+  .axis-label .sub {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    color: var(--subtle);
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .stage {
+    padding: 14px 8px 8px;
+    border-right: 1px dashed var(--hairline);
+    text-align: center;
+    position: relative;
+  }
+  .stage:last-child { border-right: none; }
+  .stage .node {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 38px;
+    margin: 0 auto 8px;
+    text-align: center;
+    box-shadow: 0 0 0 6px var(--white), 0 0 0 7px var(--navy);
+  }
+  .stage .label {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 11.5px;
+    color: var(--navy);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    line-height: 1.18;
+  }
+  .stage .where {
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.3;
+    margin-top: 2px;
+  }
+  .stage .sf-obj {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dotted var(--hairline);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.02em;
+    color: var(--navy);
+    line-height: 1.35;
+  }
+  .stage .sf-auto {
+    margin-top: 6px;
+    font-family: var(--sans);
+    font-size: 9.5px;
+    color: var(--accent);
+    font-weight: 500;
+    line-height: 1.3;
+    font-style: italic;
+    min-height: 1.3em;
+  }
+  .stage .sf-auto:empty::before {
+    content: "—";
+    color: var(--ghost);
+    font-style: normal;
+  }
+  /* The horizontal axis "rail" running through node centers */
+  .axis-band .rail {
+    grid-column: 2 / -1;
+    height: 0;
+    border-top: 2px solid var(--navy);
+    margin-top: -28px;
+    margin-bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  /* push nodes above the rail */
+  .stage .node { position: relative; z-index: 1; }
+
+  /* ============================================== */
+  /* LEGEND + FOOTER                                 */
+  /* ============================================== */
+  .legend {
+    margin-top: 36px;
+    padding: 16px 0;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend .item { display: inline-flex; align-items: center; gap: 8px; }
+  .legend .sw {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--ghost);
+    opacity: 0.32;
+    display: inline-block;
+  }
+  .legend .sw.active { background: var(--navy); opacity: 1; box-shadow: 0 0 0 3px rgba(15,40,73,0.08); }
+  .legend .sw.ghost {
+    background: transparent;
+    opacity: 1;
+    border: 1.5px dashed var(--fa);
+  }
+  .legend .divider {
+    width: 1px; height: 14px; background: var(--hairline); display: inline-block;
+  }
+
+  /* Footnote line */
+  .footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--subtle);
+  }
+  .footer .src { color: var(--muted); }
+  .footer a { color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--hairline); }
+
+  /* Responsive: collapse chart label column on narrow */
+  @media (max-width: 900px) {
+    .chart { --label-col: 160px; min-width: 880px; }
+    .axis-band { --label-col: 160px; grid-template-columns: var(--label-col) repeat(8, minmax(70px,1fr)); }
+  }
+  @media print {
+    html, body { background: var(--white); }
+    .chart-wrap { overflow: visible; }
+    .chart, .axis-band { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- =========== HEADER =========== -->
+  <header class="header">
+    <div>
+      <div class="kicker">Spark Advisors &nbsp;·&nbsp; GTM Systems &nbsp;·&nbsp; Integration Architecture</div>
+      <h1>Integration Data Map</h1>
+    </div>
+    <div class="meta">
+      <strong>v1 mockup</strong><br>
+      2026 · Q2
+    </div>
+  </header>
+
+  <!-- =========== CONTEXT LINE =========== -->
+  <p class="context">
+    <span class="navy">Salesforce is the substrate.</span> The eight stages below are SF record states - the Lead is born in SF, accumulates fields in SF, and is converted in SF. SF-native automation (validation rules, assignment rules, LeadConvertSettings, the OCR Source Field Sync flow) governs progression between stages. Seven external systems read from or write to that substrate: <span class="navy">above the line</span> sourcing &amp; data-push (HubSpot, Luma, Clay); <span class="navy">below the line</span> activity capture &amp; rep tools (Dialpad, EAC, Sendoso, Fathom). The structural reporting gap is at <strong>Stage 6</strong>, where a single sales motion writes records into at least four different stores.
+  </p>
+
+  <!-- =========== CHART =========== -->
+  <div class="chart-wrap">
+    <div class="chart">
+
+      <!-- Group banner: above -->
+      <div class="group-banner">
+        <div class="left">Above the line</div>
+        <div class="right">Sourcing &amp; data push · marketing-driven, RevOps-controlled</div>
+      </div>
+
+      <!-- ROW: HubSpot (active 1-7) -->
+      <div class="sys-label row-hs">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">HubSpot</span><span class="mode">NATIVE · BI</span></div>
+        <div class="role">The spine. Marketing, lifecycle, attribution, ~37k Tasks / 180d.</div>
+      </div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">tracks</span></div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">form fill</span></div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">creates Lead</span></div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">enriches</span></div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">mkt Tasks</span></div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">sequences</span></div>
+      <div class="chip active row-hs"><span class="dot"></span><span class="verb">stamps stage</span></div>
+      <div class="chip row-hs"><span class="dot"></span></div>
+
+      <!-- ROW: Luma (active 1,2,3,6) -->
+      <div class="sys-label row-luma">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">Luma</span><span class="mode">ZAPS · MOSTLY&nbsp;IN</span></div>
+        <div class="role">Event registration &amp; check-in. Two one-way Zaps via Zapier.</div>
+      </div>
+      <div class="chip active row-luma"><span class="dot"></span><span class="verb">event page</span></div>
+      <div class="chip active row-luma"><span class="dot"></span><span class="verb">registration</span></div>
+      <div class="chip active row-luma"><span class="dot"></span><span class="verb">creates Lead+CM</span></div>
+      <div class="chip row-luma"><span class="dot"></span></div>
+      <div class="chip row-luma"><span class="dot"></span></div>
+      <div class="chip active row-luma"><span class="dot"></span><span class="verb">check-in</span></div>
+      <div class="chip row-luma"><span class="dot"></span></div>
+      <div class="chip row-luma"><span class="dot"></span></div>
+
+      <!-- ROW: Clay (active 3,4) -->
+      <div class="sys-label row-clay">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">Clay</span><span class="mode">BATCH · OPERATOR</span></div>
+        <div class="role">Lead enrichment - firmographics, NPN. Manual CSV upload, no live sync.</div>
+      </div>
+      <div class="chip row-clay"><span class="dot"></span></div>
+      <div class="chip row-clay"><span class="dot"></span></div>
+      <div class="chip active row-clay"><span class="dot"></span><span class="verb">at insert</span></div>
+      <div class="chip active row-clay"><span class="dot"></span><span class="verb">top-up</span></div>
+      <div class="chip row-clay"><span class="dot"></span></div>
+      <div class="chip row-clay"><span class="dot"></span></div>
+      <div class="chip row-clay"><span class="dot"></span></div>
+      <div class="chip row-clay"><span class="dot"></span></div>
+
+      <!-- ============== AXIS BAND (SALESFORCE - THE RECORD LAYER) ============== -->
+      <div class="axis-band">
+        <div class="axis-label">Salesforce<br>record layer<span class="sub">SF-native</span></div>
+        <div class="stage">
+          <div class="node">1</div>
+          <div class="label">Anonymous</div>
+          <div class="where">Website · event page · outbound list</div>
+          <div class="sf-obj">(no SF record yet)</div>
+          <div class="sf-auto"></div>
+        </div>
+        <div class="stage">
+          <div class="node">2</div>
+          <div class="label">Capture</div>
+          <div class="where">HS Contact or Luma Guest</div>
+          <div class="sf-obj">(staged outside SF)</div>
+          <div class="sf-auto"></div>
+        </div>
+        <div class="stage">
+          <div class="node">3</div>
+          <div class="label">Lead created</div>
+          <div class="where">Salesforce Lead</div>
+          <div class="sf-obj">Lead</div>
+          <div class="sf-auto">Validation rules · Duplicate rules</div>
+        </div>
+        <div class="stage">
+          <div class="node">4</div>
+          <div class="label">Enrich</div>
+          <div class="where">Continuous + batch top-up</div>
+          <div class="sf-obj">Lead</div>
+          <div class="sf-auto"></div>
+        </div>
+        <div class="stage">
+          <div class="node">5</div>
+          <div class="label">Marketing</div>
+          <div class="where">Tasks on Lead</div>
+          <div class="sf-obj">Lead + Task</div>
+          <div class="sf-auto"></div>
+        </div>
+        <div class="stage">
+          <div class="node">6</div>
+          <div class="label">Sales engage</div>
+          <div class="where">Tasks · Events · CallLog · CM</div>
+          <div class="sf-obj">Lead + Task + Event + CM</div>
+          <div class="sf-auto">CM RT cascade · Activity timeline</div>
+        </div>
+        <div class="stage">
+          <div class="node">7</div>
+          <div class="label">MQL &amp; route</div>
+          <div class="where">Lifecycle_Stage · OwnerId</div>
+          <div class="sf-obj">Lead</div>
+          <div class="sf-auto">Assignment rules · Lifecycle stamps</div>
+        </div>
+        <div class="stage">
+          <div class="node">8</div>
+          <div class="label">Conversion</div>
+          <div class="where">Lead → Contact + Account</div>
+          <div class="sf-obj">Lead → Contact + Account + Opp</div>
+          <div class="sf-auto">LeadConvertSettings · OCR Sync flow</div>
+        </div>
+      </div>
+
+      <!-- Group banner: below -->
+      <div class="group-banner below">
+        <div class="left">Below the line</div>
+        <div class="right">Activity capture &amp; rep tools · individually triggered, sales-driven</div>
+      </div>
+
+      <!-- ROW: Dialpad (active 6,7) -->
+      <div class="sys-label row-dp">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">Dialpad</span><span class="mode">MGD&nbsp;PKG · INBOUND</span></div>
+        <div class="role">Call logging. Dialpad__Call_Log__c + Task. Bulk-write OwnerId override gotcha at Stage 7.</div>
+      </div>
+      <div class="chip row-dp"><span class="dot"></span></div>
+      <div class="chip row-dp"><span class="dot"></span></div>
+      <div class="chip row-dp"><span class="dot"></span></div>
+      <div class="chip row-dp"><span class="dot"></span></div>
+      <div class="chip row-dp"><span class="dot"></span></div>
+      <div class="chip active row-dp"><span class="dot"></span><span class="verb">logs call</span></div>
+      <div class="chip active row-dp"><span class="dot"></span><span class="verb">OwnerId trigger</span></div>
+      <div class="chip row-dp"><span class="dot"></span></div>
+
+      <!-- ROW: EAC (active 6) -->
+      <div class="sys-label row-eac">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">Einstein Activity Capture</span><span class="mode">NATIVE · SEP&nbsp;STORE</span></div>
+        <div class="role">Auto-syncs rep email &amp; calendar. Lives in separate store - invisible to SOQL on Task/Event.</div>
+      </div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+      <div class="chip active row-eac"><span class="dot"></span><span class="verb">captures</span></div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+      <div class="chip row-eac"><span class="dot"></span></div>
+
+      <!-- ROW: Sendoso (active 6) -->
+      <div class="sys-label row-sd">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">Sendoso</span><span class="mode">OAUTH · WRITE</span></div>
+        <div class="role">Direct mail &amp; eGift. Writes 19 fields across CampaignMember, Lead, Contact, Task.</div>
+      </div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+      <div class="chip active row-sd"><span class="dot"></span><span class="verb">gift writeback</span></div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+      <div class="chip row-sd"><span class="dot"></span></div>
+
+      <!-- ROW: Fathom (NOT integrated, ghosted at 6) -->
+      <div class="sys-label row-fa">
+        <div class="accent-bar"></div>
+        <div class="row1"><span class="name">Fathom</span><span class="mode">NOT INTEGRATED</span></div>
+        <div class="role">Meeting recording + AI summaries. Lives only in Fathom workspace; SF and HS see nothing.</div>
+      </div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+      <div class="chip ghosted row-fa"><span class="dot"></span><span class="verb">records (no sync)</span></div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+      <div class="chip row-fa"><span class="dot"></span></div>
+
+    </div>
+  </div>
+
+  <!-- =========== LEGEND =========== -->
+  <div class="legend">
+    <span class="item"><span class="sw active" style="background: var(--navy);"></span>Active at stage</span>
+    <span class="item"><span class="sw"></span>Not active</span>
+    <span class="item"><span class="sw ghost"></span>Used but not integrated (Fathom)</span>
+    <span class="divider"></span>
+    <span class="item" style="color: var(--ink);">Navy band = <strong style="color:var(--navy); font-weight:600;">Salesforce</strong> · the record layer; red italics = SF-native automation</span>
+    <span class="divider"></span>
+    <span class="item">Color = system identity</span>
+  </div>
+
+  <!-- =========== FOOTER =========== -->
+  <div class="footer">
+    <div class="src">Source: <a href="./README.md">README.md</a> &nbsp;·&nbsp; lat.md/integrations.md</div>
+    <div>Scope: Top of funnel → Lead conversion &nbsp;·&nbsp; Out of scope: post-conversion</div>
+  </div>
+
+</div>
+</body>
+</html>
