@@ -526,7 +526,7 @@ footer a { color: var(--deep); }
       <li><strong>lat.md knowledge graph</strong> - searched semantically; returns only the matching section, not the whole graph</li>
       <li><strong>Memory files</strong> - persisted across sessions, recalled when the topic comes up</li>
     </ul>
-    <p>That just-in-time shape is the efficiency mechanism. Nothing is preloaded; almost nothing gets re-read. Each always-on rule is graded on cost vs trigger frequency; deep-reference ones live as on-demand skills instead. The discipline keeps the always-on budget lean - the most recent grading cut about <strong>14k tokens</strong> off every session's startup.</p>
+    <p>That just-in-time shape is the efficiency mechanism. Nothing is preloaded; almost nothing gets re-read. A weekly auto-audit (<code>/claude-efficiency-pulse</code>, every Monday at 7am) scans the past 7 days of sessions for drift - long sessions, missed knowledge-graph briefings, repeated re-reads, rule-load patterns - and posts the findings to Slack. The discipline keeps the always-on budget lean: the most recent rule-cost grading cut about <strong>14k tokens</strong> off every session's startup.</p>
 
     <div class="te-section-head">
       <span class="kicker">Where the work goes</span>
