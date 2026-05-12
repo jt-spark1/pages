@@ -510,7 +510,8 @@ footer a { color: var(--deep); }
   <section class="token-economy">
     <span class="kicker">The token economy</span>
     <h2>How the system pays back in real time</h2>
-    <p class="lead">Every Claude session needs context: how the org is set up, where things live, the team's conventions. The system in this doc means that context is loaded once and reused - skills, rules, and the knowledge graph stay in Claude's working memory across sessions. The less time Claude spends relearning, the more it spends shipping.</p>
+    <p class="lead"><strong>The compounding 6%.</strong> That share of every Claude session goes to building the system itself - new skills, rules, knowledge-graph entries. It's the only category of spend where more now means less later, because each new artifact discounts the cost of every future ticket that touches the same area. Everything else gets cheaper because of it.</p>
+    <p>Every Claude session needs context: how the org is set up, where things live, the team's conventions. The system in this doc means that context is loaded once and reused - skills, rules, and the knowledge graph stay in Claude's working memory across sessions. The less time Claude spends relearning, the more it spends shipping.</p>
 
     <div class="te-section-head">
       <span class="kicker">Where the work goes</span>
@@ -518,6 +519,11 @@ footer a { color: var(--deep); }
     </div>
 
     <div class="activity-grid">
+      <div class="activity-row te-compound">
+        <div class="activity-label">Compounding the system<span class="activity-narr">new skills, rules, knowledge graph &middot; strategic spend</span></div>
+        <div class="activity-bar"><div class="activity-fill" style="width:6%;background:linear-gradient(90deg,#F2DED0,#e89a5e)"></div></div>
+        <div class="activity-pct">6%</div>
+      </div>
       <div class="activity-row">
         <div class="activity-label">Executing work<span class="activity-narr">deploys, record changes, code</span></div>
         <div class="activity-bar"><div class="activity-fill" style="width:55%;background:#131F5B"></div></div>
@@ -533,14 +539,9 @@ footer a { color: var(--deep); }
         <div class="activity-bar"><div class="activity-fill" style="width:10%;background:#4e5fc8"></div></div>
         <div class="activity-pct">10%</div>
       </div>
-      <div class="activity-row te-compound">
-        <div class="activity-label">Compounding the system<span class="activity-narr">new skills, rules, knowledge graph</span></div>
-        <div class="activity-bar"><div class="activity-fill" style="width:6%;background:linear-gradient(90deg,#F2DED0,#e89a5e)"></div></div>
-        <div class="activity-pct">6%</div>
-      </div>
     </div>
 
-    <p>I integrated context-mode into my workflow this past week - a tool that processes large outputs in the background and returns only the summary - and it's already trimming the &ldquo;gathering context&rdquo; share. The <strong>6% spent compounding the system</strong> is the only category where more spend now means less spend later: every new skill, rule, or knowledge-graph entry discounts the cost of every future ticket that touches the same area.</p>
+    <p>I integrated context-mode into my workflow this past week - a tool that processes large outputs in the background and returns only the summary. It already pulled the &ldquo;gathering context&rdquo; share from <strong>~17% to ~15%</strong> in one week.</p>
   </section>
 
   <section>
@@ -555,7 +556,7 @@ footer a { color: var(--deep); }
         <h2 class="layer-title">Orchestrated <a href="https://github.com/Spark-Advisors/salesforce-spark/tree/main/.claude/commands" target="_blank" rel="noopener">workflow skills/commands</a></h2>
         <p>Multi-step jobs that used to be checklists in my head are now slash commands. Each one chains planning, deployment, QA, and the PR.</p>
 <ul><li><strong><code>/plan-and-build</code></strong>: Shortcut story in, deployed metadata out. Reads the story, drafts a plan, builds the field, validation rule, permset, or FlexiPage, deploys to dev, runs QA, opens a PR.</li><li><strong><code>/push-through-env</code></strong>: Pushes a feature branch through the Gearset pipeline (dev to qa to staging to main) with safety checks at each stop.</li><li><strong><code>/data-upload-leads</code></strong>: Pre-flight automation scan, single-record dry-run, fuzzy-dedup pass, bulk import, verification. The Medicarians round 2 import (86 of 88 records actioned, 47 CampaignMember rows) ran on this skill.</li><li><strong><code>/sprint-summary</code> and <code>/sprint-pulse</code></strong>: Auto-generated Shortcut-driven sprint recaps for team-facing readouts as well as user-facing release notes. Mid-sprint health checks for trajectory. Pulse is run on a loop daily at 7am.</li><li><strong><code>/sfdc-audit-trail-monitor</code></strong>: Daily Setup Audit Trail scan, classified by severity, posted to Slack. Catches admin-direct prod changes before they cause drift. Allows team to push changes directly in prod if needed (happened once when I was OOO, but i was easily able to catch up and back-propagate all the changes to lower envs).</li></ul>
-        
+<p><em>What used to be 4-5 manual prompts on each multi-step task is now one slash command.</em></p>
       </div>
     </article>
     <article class="layer-card" id="layer-2">
@@ -603,7 +604,7 @@ footer a { color: var(--deep); }
         <p>The biggest long-term investment in this list, and the one nobody sees day to day. lat.md is a structured, semantically searchable knowledge graph of our Salesforce architecture, business processes, object model, and integrations. It lives in the repo next to the code, gets validated like code (broken links fail CI), and gets queried at the start of every task.</p>
 <ul><li>OpenAI API key wired into Claude Code&#x27;s UserPromptSubmit and Stop hooks so the search happens automatically and doesn’t pollute session context.</li><li>Every new task starts with lat search against the user&#x27;s intent.</li><li>Claude grounds itself in actual architecture instead of guessing from file names.</li></ul>
 <p><strong>Example: when a new story mentions</strong> &quot;Channel Source&quot;, lat retrieves the 30-plus PR Channel Source attribution architecture from sc-38847 instantly. Claude does not propose a parallel solution nor does it have to read the codebase directly. It builds on what is already there.</p>
-        
+<p><em>Architectural context loads in one search instead of being re-discovered every task.</em></p>
       </div>
     </article>
     <article class="layer-card" id="layer-5">
@@ -626,6 +627,7 @@ footer a { color: var(--deep); }
 <p>Real catches from this loop:</p>
 <ul><li><strong>Medicarians dedup near-miss.</strong> Round 1 of the lead import slipped 3 dupes past the dedup pass because they were the same person under different emails. <code>/reflection</code> captured the gap and codified &quot;fuzzy Name+Company dedup, not just email&quot; into the data-imports rule. Round 2 ran with zero dupe leakage.</li><li><strong>Silent Bulk API no-ops.</strong> During the Account hierarchy backfill, 3 of 4 ParentId updates landed as &quot;success&quot; but didn&#x27;t actually change anything in prod, because the Bulk API treats blank cells as &quot;leave unchanged&quot; rather than &quot;set to null.&quot; <code>/reflection</code> turned this into a rule with the literal #N/A workaround. Caught before the next bulk job ran.</li><li><strong>Cross-system audit pattern.</strong> When I asked Claude to find &quot;Channel Source&quot; the first time, it spent 30 minutes grepping Apex classes that didn&#x27;t exist. <code>/reflection</code> added a rule to broaden lat.md searches to the business concept first. Saved hours on every subsequent attribution question.</li></ul>
 <p>Each loop adds one to a few discrete improvements. The compounding above happens because of this loop, not in spite of it.</p>
+<p><em>Each correction gets captured once and never has to be made again.</em></p>
 
       </div>
     </article>
@@ -635,7 +637,7 @@ footer a { color: var(--deep); }
         <h2 class="layer-title">Manual single-purpose skills</h2>
         <p>Small but durable. Each one is roughly 50 lines of markdown that codifies the right way to do X in this org.</p>
 <p><code>/commit-and-push</code>, <code>/worktree</code>, <code>/sfdc-retrieve</code>, <code>/pbcopy</code>, <code>/create-gdoc</code>, <code>/upload-to-gsheet</code>, <code>/create-story</code>, <code>/estimate-stories</code>, <code>/organize-temp</code>, and others.</p>
-<p>Unglamorous and high-frequency. Also the easiest to teach Claude: &quot;do it this way next time&quot; turns into 5 minutes of skill authoring, and then it is permanent.</p>
+<p>Unglamorous and high-frequency. Five minutes of skill authoring saves a 30-minute task every time it repeats - &quot;do it this way next time&quot; turns into a permanent answer.</p>
 
       </div>
     </article>
@@ -738,14 +740,14 @@ footer a { color: var(--deep); }
     <p>Velocity and tech debt usually trade off. In most orgs I&#x27;ve worked in, the engineer who ships fastest is also the one quietly accumulating &quot;we&#x27;ll fix that later&quot; decisions: picklist values without descriptions, validation rules without exemptions, flows nobody else can read. Six months in, the next admin cannot move because every change touches three undocumented dependencies.</p>
 <p>What I&#x27;ve built runs the other way. Every shipped artifact ships with the context that explains it:</p>
 <ul><li><strong>Description and Shortcut story link</strong> on the metadata itself.</li><li><strong>lat.md entry</strong> if the change touches architecture.</li><li><strong>Rule file entry</strong> if it codifies a reusable pattern.</li><li><strong>Test or QA scenario</strong> if it changes behavior.</li></ul>
-<p>The 90 tickets shipped this half landed in an org that is more documented, more conventionally named, and more testable than it was on day one. New work gets faster because the discipline is automated. That&#x27;s why I think of it as a scalability investment, not just a throughput one.</p>
+<p>The 90 tickets shipped this half landed in an org that is more documented, more conventionally named, and more testable than it was on day one. New work gets faster because the discipline is automated. That&#x27;s why I think of it as a scalability investment, not just a throughput one. The same discipline that prevents tech debt is also what makes each sprint cheaper than the last.</p>
   </section>
 
   <section class="where">
     <span class="kicker" style="color:#F2DED0">Where this goes next</span>
     <h2>The next compounding curve</h2>
     <p>What&#x27;s next:</p>
-<ul><li><strong>More remote async</strong>. Cursor Cloud Agents handle small changes well. Pushing them toward bigger autonomous jobs (with review gates) is the next step. Claude remote agents weren’t working last time I tried to use them.</li><li><strong>Cross-system audits. </strong>The <code>/hubspot-sfdc-audit</code> skill is the prototype. Same pattern can run against Dialpad, Sendoso, and Airtable as those integrations mature.</li><li><strong>Skill portability.</strong> Most of what&#x27;s been built lives in this repo. A subset is general enough to ship as an internal package other Spark teams could adopt: intake skills, sprint pulse, audit trail monitoring. Here’s a <a href="https://github.com/Spark-Advisors/spark-claude-plugins" target="_blank" rel="noopener">plugin marketplace</a> I spun up last week, but haven’t shared broadly yet until I can confirm others can access and leverage easily.</li></ul>
+<ul><li><strong>Context-mode coverage across more workflows.</strong> This past week's adoption already pulled &ldquo;gathering context&rdquo; from ~17% to ~15%. Expanding to more workflows drives it toward 10%.</li><li><strong>More routine tickets on cloud-based agents.</strong> Cursor Cloud Agents handle picklist additions, list-view tweaks, and field updates from a Slack mention. Pushing them toward bigger autonomous jobs (with review gates) moves that work off my plan entirely.</li><li><strong>Shared skills across teams.</strong> The <a href="https://github.com/Spark-Advisors/spark-claude-plugins" target="_blank" rel="noopener">plugin marketplace</a> I spun up last week lets a skill built once ship to other Spark teams. The build cost is amortized across users, not duplicated per workspace.</li></ul>
   </section>
 
 </main>
