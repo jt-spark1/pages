@@ -249,7 +249,8 @@ ul li::before {
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(19,31,91,.12);
 }
-.shot img { display: block; width: 100%; height: auto; }
+.shot img { display: block; width: 100%; height: auto; cursor: zoom-in; transition: filter .15s, transform .15s; }
+.shot img:hover { filter: brightness(1.04); }
 .shot figcaption {
   background: var(--white);
   color: var(--mute);
@@ -535,6 +536,57 @@ html { scroll-behavior: smooth; }
 }
 .toc-top button:hover { background: var(--yellow); border-color: var(--deep); }
 .toc-top .arrow { font-size: 13px; line-height: 1; }
+
+/* ---------- LIGHTBOX ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0,0,0,.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  cursor: zoom-out;
+}
+.lightbox.open { display: flex; }
+.lightbox-img {
+  max-width: 95vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.1);
+  cursor: default;
+  animation: lb-pop .18s ease-out;
+}
+@keyframes lb-pop {
+  from { opacity: 0; transform: scale(.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s, transform .12s;
+}
+.lightbox-close:hover { background: rgba(0,0,0,.8); transform: scale(1.06); }
+body.lb-open { overflow: hidden; }
 [id="token-economy"], [id="stack"], [id="sprints"], [id="discipline"], [id="whats-next"],
 article.layer-card { scroll-margin-top: 24px; }
 @media (max-width: 1280px) {
@@ -868,6 +920,41 @@ article.layer-card { scroll-margin-top: 24px; }
 <footer>
   Jonathan Tang &middot; GTM Systems &middot; May 2026 &middot; <a href="https://github.com/Spark-Advisors/salesforce-spark">spark-sfdc</a>
 </footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img class="lightbox-img" id="lightbox-img" alt="" />
+</div>
+
+<script>
+(function(){
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lightbox-img');
+  var lbClose = document.getElementById('lightbox-close');
+  function open(src, alt){
+    lbImg.src = src;
+    lbImg.alt = alt || '';
+    lb.classList.add('open');
+    document.body.classList.add('lb-open');
+  }
+  function close(){
+    lb.classList.remove('open');
+    document.body.classList.remove('lb-open');
+    lbImg.src = '';
+  }
+  document.querySelectorAll('.shot img').forEach(function(img){
+    img.addEventListener('click', function(){ open(img.currentSrc || img.src, img.alt); });
+  });
+  lb.addEventListener('click', function(e){
+    if (e.target === lbImg) return;
+    close();
+  });
+  lbClose.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && lb.classList.contains('open')) close();
+  });
+})();
+</script>
 
 <script>
 (function(){
