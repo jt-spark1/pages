@@ -466,9 +466,79 @@ footer a { color: var(--deep); }
   .sprint-row { grid-template-columns: 1fr; gap: 8px; padding: 14px 0; }
   .sprint-narr { font-size: 13px; }
 }
+
+/* ---------- TOC ---------- */
+html { scroll-behavior: smooth; }
+.toc {
+  position: fixed;
+  top: 24px;
+  left: 16px;
+  z-index: 50;
+  width: 178px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 14px 12px 16px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid var(--lavender);
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(19,31,91,.06);
+  backdrop-filter: blur(6px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--mute);
+}
+.toc-title {
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin: 0 0 10px;
+}
+.toc ol, .toc ul { list-style: none; padding: 0; margin: 0; }
+.toc li { margin: 0; line-height: 1.35; }
+.toc a {
+  display: block;
+  color: var(--deep);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.toc a:hover { background: var(--yellow); border-left-color: var(--deep); }
+.toc a.active { background: var(--lavender); border-left-color: var(--deep); font-weight: 600; }
+.toc .toc-sub { padding-left: 8px; margin: 2px 0 4px; border-left: 1px dashed var(--lavender); }
+.toc .toc-sub a { font-size: 10.5px; padding: 2px 6px; color: var(--mute); }
+.toc .toc-sub a.active { color: var(--deep); }
+[id="token-economy"], [id="stack"], [id="sprints"], [id="discipline"], [id="whats-next"],
+article.layer-card { scroll-margin-top: 24px; }
+@media (max-width: 1280px) {
+  .toc { display: none; }
+}
 </style>
 </head>
 <body>
+
+<nav class="toc" aria-label="Section navigation">
+  <div class="toc-title">On this page</div>
+  <ol>
+    <li><a href="#token-economy">The token economy</a></li>
+    <li><a href="#stack">The stack</a>
+      <ul class="toc-sub">
+        <li><a href="#layer-1">1. Workflow skills</a></li>
+        <li><a href="#layer-2">2. Browser automation</a></li>
+        <li><a href="#layer-3">3. Cursor Cloud Agents</a></li>
+        <li><a href="#layer-4">4. Knowledge graph</a></li>
+        <li><a href="#layer-5">5. Rules &amp; memory</a></li>
+        <li><a href="#layer-6">6. /reflection loop</a></li>
+        <li><a href="#layer-7">7. Single-purpose skills</a></li>
+      </ul>
+    </li>
+    <li><a href="#sprints">Sprints</a></li>
+    <li><a href="#discipline">Discipline</a></li>
+    <li><a href="#whats-next">What's next</a></li>
+  </ol>
+</nav>
 
 <header class="hero">
   <div class="hero-inner">
@@ -507,7 +577,7 @@ footer a { color: var(--deep); }
 <p>The numbers: 90 tickets and 148 points shipped solo across 5 sprints (Feb 23 to May 1). Volume is not the story. The story is what’s built underneath the volume.</p>
   </section>
 
-  <section class="token-economy">
+  <section class="token-economy" id="token-economy">
     <span class="kicker">The token economy</span>
     <h2>How the system pays back in real time</h2>
     <p class="lead"><strong>~6% of every Claude session</strong> goes to building the system itself - new skills, rules, knowledge-graph entries. It's the only category where more spend now means less spend later. Every other category gets cheaper because of it.</p>
@@ -558,7 +628,7 @@ footer a { color: var(--deep); }
   </section>
 
   <section>
-    <div class="stack-head">
+    <div class="stack-head" id="stack">
       <span class="kicker">The stack</span>
       <span class="rule"></span>
     </div>
@@ -656,7 +726,7 @@ footer a { color: var(--deep); }
     </article>
   </section>
 
-  <section class="compounding">
+  <section class="compounding" id="sprints">
     <span class="kicker">The compounding effect</span>
     <h2>Where Claude Code sat at each sprint boundary</h2>
     <p>Roughly where Claude Code sat at each sprint boundary:</p>
@@ -746,7 +816,7 @@ footer a { color: var(--deep); }
     </div>
   </section>
 
-  <section class="velocity">
+  <section class="velocity" id="discipline">
     <span class="kicker">Velocity without tech debt</span>
     <h2>Discipline compiled into the workflow</h2>
     <div class="pullquote">"Six months in, the next admin cannot move because every change touches three undocumented dependencies. What I've built runs the other way."</div>
@@ -756,7 +826,7 @@ footer a { color: var(--deep); }
 <p>The 90 tickets shipped this half landed in an org that is more documented, more conventionally named, and more testable than it was on day one. New work gets faster because the discipline is automated. That&#x27;s why I think of it as a scalability investment, not just a throughput one. The same discipline that prevents tech debt is also what makes each sprint cheaper than the last.</p>
   </section>
 
-  <section class="where">
+  <section class="where" id="whats-next">
     <span class="kicker" style="color:#F2DED0">Where this goes next</span>
     <h2>The next compounding curve</h2>
     <p>What&#x27;s next:</p>
@@ -768,6 +838,32 @@ footer a { color: var(--deep); }
 <footer>
   Jonathan Tang &middot; GTM Systems &middot; May 2026 &middot; <a href="https://github.com/Spark-Advisors/salesforce-spark">spark-sfdc</a>
 </footer>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.toc a[href^="#"]');
+  if (!links.length) return;
+  var byId = {};
+  var targets = [];
+  links.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) { byId[id] = a; targets.push(el); }
+  });
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var a = byId[e.target.id];
+      if (!a) return;
+      if (e.isIntersecting) {
+        Object.keys(byId).forEach(function(k){ byId[k].classList.remove('active'); });
+        a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+  targets.forEach(function(t){ io.observe(t); });
+})();
+</script>
 
 </body>
 </html>
