@@ -560,7 +560,7 @@ html { scroll-behavior: smooth; }
   object-fit: contain;
   border-radius: 10px;
   box-shadow: 0 24px 64px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.1);
-  cursor: default;
+  cursor: zoom-out;
   animation: lb-pop .18s ease-out;
 }
 @keyframes lb-pop {
@@ -945,10 +945,7 @@ article.layer-card { scroll-margin-top: 24px; }
   document.querySelectorAll('.shot img').forEach(function(img){
     img.addEventListener('click', function(){ open(img.currentSrc || img.src, img.alt); });
   });
-  lb.addEventListener('click', function(e){
-    if (e.target === lbImg) return;
-    close();
-  });
+  lb.addEventListener('click', function(){ close(); });
   lbClose.addEventListener('click', close);
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && lb.classList.contains('open')) close();
