@@ -472,6 +472,32 @@ ul li::before {
 .where strong { color: #fff; }
 .where code { background: rgba(255,255,255,.08); color: #F2DED0; border-color: rgba(255,255,255,.1); }
 
+/* ---------- ASIDE / BONUS ---------- */
+.aside-section {
+  background: var(--yellow);
+  border: 1px solid #e0d8b8;
+  border-radius: 18px;
+  padding: 36px 40px;
+  margin-top: 64px;
+}
+.aside-section .kicker {
+  color: #7a6a30;
+  margin-bottom: 10px;
+}
+.aside-section h2 {
+  color: var(--ink);
+  font-size: clamp(22px, 2.4vw, 28px);
+  margin: 0 0 18px;
+}
+.aside-section p {
+  color: #3a3520;
+  font-size: 16px;
+  max-width: 72ch;
+}
+@media (max-width: 900px) {
+  .aside-section { padding: 28px 22px; }
+}
+
 /* ---------- FOOTER ---------- */
 footer {
   text-align: center;
@@ -644,6 +670,7 @@ article.layer-card { scroll-margin-top: 24px; }
     <li><a href="#sprints">Sprints</a></li>
     <li><a href="#discipline">Discipline</a></li>
     <li><a href="#whats-next">What's next</a></li>
+    <li><a href="#gtm-distinction">Where this work sits</a></li>
   </ol>
   <div class="toc-top">
     <button type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Back to top">
@@ -656,7 +683,7 @@ article.layer-card { scroll-margin-top: 24px; }
   <div class="top-nav-inner">
     <a href="https://github.com/Spark-Advisors/salesforce-spark" target="_blank" rel="noopener">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      spark-sfdc
+      salesforce-spark
     </a>
   </div>
 </nav>
@@ -778,7 +805,7 @@ article.layer-card { scroll-margin-top: 24px; }
       <div class="layer-body">
         <h2 class="layer-title">Remote async via Cursor Cloud Agents</h2>
         <p>Same engine, different surface. I @-mention Cursor in Slack and it executes work without me opening Salesforce or an IDE.</p>
-<ul><li>Opens PRs in GitHub against the spark-sfdc repo.</li><li>Makes SFDC changes directly in sandboxes (and prod when scoped).</li><li>Updates Shortcut stories with completion comments.</li><li>Bridges the gap when a request lands in Slack and I am AFK or in a meeting.</li></ul>
+<ul><li>Opens PRs in GitHub against the salesforce-spark repo.</li><li>Makes SFDC changes directly in sandboxes (and prod when scoped).</li><li>Updates Shortcut stories with completion comments.</li><li>Bridges the gap when a request lands in Slack and I am AFK or in a meeting.</li></ul>
 <p><strong>Use case:</strong> small picklist additions, list view tweaks, field description updates. The kind of work where context-switching into an IDE is more expensive than the work itself.</p>
         
 <div class="screenshots">
@@ -951,13 +978,21 @@ article.layer-card { scroll-margin-top: 24px; }
     <span class="kicker" style="color:#F2DED0">Where this goes next</span>
     <h2>The next compounding curve</h2>
     <p>What&#x27;s next:</p>
-<ul><li><strong>Context-mode coverage across more workflows.</strong> This past week's adoption already pulled &ldquo;gathering context&rdquo; from ~17% to ~15%. Expanding to more workflows drives it toward 10%.</li><li><strong>More routine tickets on cloud-based agents.</strong> Cursor Cloud Agents handle picklist additions, list-view tweaks, and field updates from a Slack mention. Pushing them toward bigger autonomous jobs (with review gates) moves that work off my plan entirely.</li><li><strong>Shared skills across teams.</strong> A skill built once ships to any Spark team through the <a href="https://github.com/Spark-Advisors/spark-claude-plugins" target="_blank" rel="noopener">plugin marketplace</a> - one build cost, amortized across everyone who adopts it.</li></ul>
+<ul><li><strong>Context-mode coverage across more workflows.</strong> This past week's adoption already pulled &ldquo;gathering context&rdquo; from ~17% to ~15%. Expanding to more workflows drives it toward 10%.</li><li><strong>More routine tickets on cloud-based agents.</strong> Cursor Cloud Agents handle picklist additions, list-view tweaks, and field updates from a Slack mention. Pushing them toward bigger autonomous jobs (with review gates) moves that work off my plan entirely.</li><li><strong>Shared skills across teams.</strong> A skill built once ships to any Spark team through a <a href="https://github.com/Spark-Advisors/spark-claude-plugins" target="_blank" rel="noopener">plugin marketplace</a> I spun up - one build cost, amortized across everyone who adopts it.</li></ul>
+  </section>
+
+  <section class="aside-section" id="gtm-distinction">
+    <span class="kicker">Worth noting</span>
+    <h2>A note on where this work sits</h2>
+    <p>"GTM Engineering" is emerging as a distinct role in the industry - using AI to accelerate the processes that run on top of systems: automated lead enrichment, pipeline generation, intelligent follow-up sequences, dynamic CTAs. It's process-layer work: making the existing GTM motion faster and smarter.</p>
+    <p>The work in this doc sits one layer below that. Building the Salesforce org, the integration layer, the Claude skill framework, the automation infrastructure - that's closer to what the industry is starting to call GTM Systems Engineering. The platform that GTM workflows run on, rather than the workflows themselves.</p>
+    <p>The two tracks overlap more than they diverge. You need workflow intuition to build the right platform, and platform fluency to know what's actually automatable. But they pull in different directions, and the industry is starting to recognize them as such.</p>
   </section>
 
 </main>
 
 <footer>
-  Jonathan Tang &middot; GTM Systems &middot; May 2026 &middot; <a href="https://github.com/Spark-Advisors/salesforce-spark">spark-sfdc</a>
+  Jonathan Tang &middot; GTM Systems &middot; May 2026 &middot; <a href="https://github.com/Spark-Advisors/salesforce-spark">salesforce-spark</a>
 </footer>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
