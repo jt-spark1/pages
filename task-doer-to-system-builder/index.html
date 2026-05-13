@@ -183,6 +183,14 @@ ul li::before {
   background: var(--deep);
 }
 
+/* Override paragraph/li max-width inside box sections so text fills the container */
+.intro p, .intro ul li,
+.token-economy p, .token-economy ul li,
+.compounding p, .compounding ul li,
+.velocity p, .velocity ul li,
+.where p, .where ul li,
+.aside-section p, .aside-section ul li { max-width: none; }
+
 .intro {
   background: var(--white);
   border: 1px solid var(--lavender);
@@ -492,7 +500,6 @@ ul li::before {
 .aside-section p {
   color: #3a3520;
   font-size: 16px;
-  max-width: 72ch;
 }
 @media (max-width: 900px) {
   .aside-section { padding: 28px 22px; }
