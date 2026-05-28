@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opportunity Stage Workflow Audit</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 880px;
+    margin: 56px auto;
+    padding: 0 24px;
+    color: #1a1a2e;
+    line-height: 1.6;
+  }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 2px; }
+  .subtitle { color: #6b7280; font-size: 14px; margin-bottom: 28px; }
+  h2 { font-size: 18px; font-weight: 700; margin-top: 40px; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 15px; font-weight: 700; margin-top: 26px; margin-bottom: 6px; }
+  h3 .owner { font-weight: 400; color: #6b7280; font-size: 13px; }
+  p { margin: 10px 0; }
+  .bottomline {
+    background: #f0f6ff; border: 1px solid #c7dbff; border-radius: 8px;
+    padding: 16px 18px; margin: 18px 0 8px;
+  }
+  .bottomline strong { color: #1d4ed8; }
+  ul { padding-left: 20px; margin: 10px 0; }
+  li { margin: 7px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 4px; font-size: 13.5px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ededf2; vertical-align: top; }
+  th { background: #f7f7fb; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
+  td.field { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12.5px; white-space: nowrap; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 11px; font-size: 12px; font-weight: 600; }
+  .keep { background: #e7f6ec; color: #1a7f3c; }
+  .decide { background: #fdf2e0; color: #9a6700; }
+  .pct { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .cond { color: #6b7280; font-style: italic; }
+  .note { color: #6b7280; font-size: 13px; margin-top: 4px; }
+  .tag { display:inline-block; background:#eef0f4; color:#374151; border-radius:6px; padding:1px 7px; font-size:12px; }
+  footer { margin-top: 44px; padding-top: 14px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12.5px; }
+</style>
+</head>
+<body>
+  <h1>Opportunity Stage Workflow Audit</h1>
+  <div class="subtitle">Spark Advisors GTM Systems &middot; sc-39885 &middot; May 28, 2026 &middot; <span class="tag">No changes deployed &mdash; audit only</span></div>
+
+  <div class="bottomline">
+    <p style="margin-top:0;"><strong>Bottom line.</strong> The stage gates are working and the required fields are being filled. Measured on deals actually worked in the past month, required-field completion runs <strong>76&ndash;95%</strong> at every stage &mdash; including all nine fields on the "clunky" Negotiate gate (filled on 10 of 11 deals). The fields also match what Diana's documented process says belongs at each stage. The friction reps feel is the <strong>volume of fields at once</strong>, not wrong or missing requirements. The genuine gaps are <strong>structural</strong>: a misconfigured "Develop" stage, a documented "Announcing &amp; Onboarding" stage that doesn't exist, and several documented checkpoints that aren't captured anywhere.</p>
+  </div>
+
+  <h2>Key findings</h2>
+  <ul>
+    <li><strong>Gates work on active deals.</strong> Among deals whose stage changed in the past month, required fields are filled 76&ndash;95% across all stages. (The scary "5&ndash;7% filled" all-time number was stale history &mdash; the gates only shipped May 10, so older deals never faced them.)</li>
+    <li><strong>Gates match the documentation.</strong> For every stage and field that exists, Salesforce requires what the process deck says belongs at that stage. Nothing is required in the wrong place.</li>
+    <li><strong>The friction is UX, not the rules.</strong> Negotiate surfaces nine required fields at one save. It's worse when a rep <em>skips</em> stages &mdash; jumping ahead triggers every earlier stage's requirements at the same time.</li>
+    <li><strong>Two stage-model gaps.</strong> "Develop" is switched on but parked at the bottom of the list with zero deals and no gate (the deck wants it as the first stage). "Announcing &amp; Onboarding" is in the deck but doesn't exist in Salesforce.</li>
+    <li><strong>The documented process is richer than what's enforced.</strong> Several documented checkpoints (mutual close plan agreed, path to signature, non-AP decision makers, releases granted) have no field, so they're never captured.</li>
+  </ul>
+
+  <h2>The fields, by stage</h2>
+  <p class="note">% = share of recently-worked deals (stage changed in the past month) at or past that stage with the field filled. "Conditional" fields only apply to Call Center / Hybrid agencies.</p>
+
+  <h3>Discovery <span class="owner">&mdash; owned by SGM / AE</span></h3>
+  <table>
+    <tr><th>Field</th><th>Required</th><th>Filled (recent)</th><th>Verdict</th></tr>
+    <tr><td class="field">Readiness to Move</td><td>Always</td><td class="pct">90%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">RR: Last Year</td><td>Always</td><td class="pct">95%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Agents: Last Year</td><td>Always</td><td class="pct">95%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Strategic Priorities</td><td>Always</td><td class="pct">95%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Compliance Check</td><td class="cond">Call Center / Hybrid</td><td>&mdash;</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Staffing Requirements</td><td class="cond">Call Center only</td><td>&mdash;</td><td><span class="badge keep">Keep</span></td></tr>
+  </table>
+
+  <h3>Solutioning <span class="owner">&mdash; owned by SGM / AE</span></h3>
+  <table>
+    <tr><th>Field</th><th>Required</th><th>Filled (recent)</th><th>Verdict</th></tr>
+    <tr><td class="field">Onboarding Concerns Identified</td><td>Always</td><td class="pct">76%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Workflows That Resonated</td><td>Always</td><td class="pct">81%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Demo Status</td><td>Always</td><td class="pct">76%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Compliance Form Link</td><td class="cond">Call Center / Hybrid</td><td>&mdash;</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Funding Requirements</td><td class="cond">Call Center only</td><td>&mdash;</td><td><span class="badge keep">Keep</span></td></tr>
+  </table>
+
+  <h3>Negotiate <span class="owner">&mdash; owned by SGM / AE &middot; the "clunky" gate (9 required fields)</span></h3>
+  <table>
+    <tr><th>Field</th><th>Required</th><th>Filled (recent)</th><th>Verdict</th></tr>
+    <tr><td class="field">Downline Agents</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Signed Run Rate Applications</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Contracting Worksheet</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Deal Model</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Top MA Carriers</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Co-op Advance</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Bonus</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Equity</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">True Up Required</td><td>Always</td><td class="pct">91%</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Pro Forma Link</td><td class="cond">Call Center only</td><td>&mdash;</td><td><span class="badge keep">Keep</span></td></tr>
+  </table>
+  <p class="note">All nine always-required fields are filled on 10 of the 11 recently-worked deals that reached Negotiate. The fix for "clunky" is layout/UX (group the fields, clearer errors, coach reps to move one stage at a time) &mdash; not removing requirements.</p>
+
+  <h3>Verbal Commitment <span class="owner">&mdash; owned by SGM / AE</span></h3>
+  <table>
+    <tr><th>Field</th><th>Required</th><th>Filled (recent)</th><th>Verdict</th></tr>
+    <tr><td class="field">Handoff Notes</td><td>Always</td><td class="pct">78%</td><td><span class="badge keep">Keep</span></td></tr>
+  </table>
+
+  <h3>Won &rarr; Closed Won <span class="owner">&mdash; owned by RevOps (two-step close)</span></h3>
+  <table>
+    <tr><th>Field / Gate</th><th>Required</th><th>Lives on</th><th>Verdict</th></tr>
+    <tr><td class="field">Agency NPN</td><td>To enter Won</td><td>Account</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">Commissionable Run Rate</td><td>To Closed Won</td><td>Opportunity</td><td><span class="badge keep">Keep</span></td></tr>
+    <tr><td class="field">RevOps permission</td><td>To Closed Won (auth)</td><td>&mdash;</td><td><span class="badge keep">Keep</span></td></tr>
+  </table>
+
+  <h2>Recommendations</h2>
+  <ul>
+    <li><strong>Keep the field requirements.</strong> The data says they're right and reps are meeting them. Reduce the Negotiate friction through layout grouping, clearer error messages, and coaching reps to advance one stage at a time &mdash; not by removing fields. <span class="badge decide">Sign-off: Chris / RevOps</span></li>
+    <li><strong>Fix the "Develop" stage</strong> &mdash; move it to the front of the pipeline (as the deck intends) or turn it off. Today it's the worst of both. <span class="badge decide">Diana + Jonathan</span></li>
+    <li><strong>Decide "Announcing &amp; Onboarding"</strong> &mdash; make it a real post-close stage, or keep it in onboarding tooling and drop it from the sales-stage deck. <span class="badge decide">Diana + CS</span></li>
+    <li><strong>Decide on the unenforced documented checkpoints</strong> (mutual close plan, path to signature, etc.) &mdash; turn each into a field, a checklist item, or drop it. <span class="badge decide">Diana + Chris</span></li>
+    <li><strong>Populate Agency Type upstream</strong> so the Call Center / Hybrid requirements actually fire for those agencies org-wide. <span class="badge decide">Jonathan</span></li>
+    <li><strong>Clean up</strong> the ~58 deals stuck on retired stages and triage the large backlog of untouched Discovery deals. <span class="badge decide">Jonathan</span></li>
+    <li><strong>Ratify one canonical stage model</strong> and align the deck, the user guide, and Salesforce so they all agree. <span class="badge decide">Diana + Jonathan</span></li>
+  </ul>
+
+  <footer>
+    Source of truth: Salesforce production (sparkprod), queried May 28, 2026; Spark Sales Process deck + SFDC user guide. Population measured on the recent-activity cohort (stage changed since Apr 28, 2026). No metadata was changed &mdash; this is an audit with recommendations pending sign-off.
+  </footer>
+</body>
+</html>
