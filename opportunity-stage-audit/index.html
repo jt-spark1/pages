@@ -30,6 +30,7 @@
   th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #ededf2; vertical-align: top; }
   th { background: #f7f7fb; font-weight: 600; border-bottom: 2px solid #e5e7eb; }
   td.field { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12.5px; white-space: nowrap; }
+  td ul { margin: 2px 0; padding-left: 18px; } td ul li { margin: 3px 0; }
   .badge { display: inline-block; padding: 1px 8px; border-radius: 11px; font-size: 12px; font-weight: 600; }
   .keep { background: #e7f6ec; color: #1a7f3c; }
   .decide { background: #fdf2e0; color: #9a6700; }
@@ -115,12 +116,39 @@
   <p class="note">These are exit-criteria from the process deck that have <strong>no field or gate in Salesforce</strong> &mdash; they live only in the slides, so the system never requires or stores them. Decide per item: make it a field, a checklist/enablement item, or drop it.</p>
   <table>
     <tr><th>Stage</th><th>Documented criteria with no field</th></tr>
-    <tr><td>Discovery</td><td>Contact confirmed as Agency Principal &middot; current upline identified &middot; meeting set for SGM/AE &middot; pain points with current upline &middot; top-of-hierarchy confirmed</td></tr>
-    <tr><td>Solutioning</td><td>non-AP decision-makers identified &middot; meeting set with Spark Leadership &middot; Mutual Close Plan agreed &middot; levels &amp; carrier mix with supporting docs &middot; path to signature understood</td></tr>
-    <tr><td>Negotiate</td><td>re-confirm Mutual Close Plan &middot; finalized contract terms</td></tr>
-    <tr><td>Verbal Commitment</td><td>immediate upline &amp; top-of-hierarchy confirmed &middot; releases granted confirmed</td></tr>
-    <tr><td>Won</td><td>Mutual Action Plan executed &middot; Agency Onboarding Document completed &middot; executed contract uploaded to Files <span class="cond">(file check, not a field)</span></td></tr>
-    <tr><td>Announcing &amp; Onboarding <span class="cond">(stage missing)</span></td><td>announce in Slack &middot; account team assigned &middot; internal kickoff scheduled &middot; AM prepares onboarding materials</td></tr>
+    <tr><td>Discovery</td><td><ul>
+      <li>Contact confirmed as Agency Principal</li>
+      <li>Current upline identified</li>
+      <li>Meeting set for SGM/AE</li>
+      <li>Pain points with current upline shared</li>
+      <li>Top-of-hierarchy confirmed</li>
+    </ul></td></tr>
+    <tr><td>Solutioning</td><td><ul>
+      <li>Non-AP decision-makers identified</li>
+      <li>Meeting set with Spark Leadership</li>
+      <li>Mutual Close Plan agreed</li>
+      <li>Levels &amp; carrier mix with supporting docs</li>
+      <li>Path to signature understood</li>
+    </ul></td></tr>
+    <tr><td>Negotiate</td><td><ul>
+      <li>Re-confirm Mutual Close Plan</li>
+      <li>Finalized contract terms</li>
+    </ul></td></tr>
+    <tr><td>Verbal Commitment</td><td><ul>
+      <li>Immediate upline &amp; top-of-hierarchy confirmed</li>
+      <li>Releases granted confirmed</li>
+    </ul></td></tr>
+    <tr><td>Won</td><td><ul>
+      <li>Mutual Action Plan executed</li>
+      <li>Agency Onboarding Document completed</li>
+      <li>Executed contract uploaded to Files <span class="cond">(file check, not a field)</span></li>
+    </ul></td></tr>
+    <tr><td>Announcing &amp; Onboarding <span class="cond">(stage missing)</span></td><td><ul>
+      <li>Announce in Slack</li>
+      <li>Account team assigned</li>
+      <li>Internal kickoff scheduled</li>
+      <li>AM prepares onboarding materials</li>
+    </ul></td></tr>
   </table>
   <p class="note">Common themes: <strong>hierarchy/upline confirmation</strong>, <strong>decision-maker mapping</strong>, and <strong>planning artifacts</strong> (Mutual Close Plan, path to signature, Mutual Action Plan). Some are better as enablement checklists; others (e.g. top-of-hierarchy, decision-makers) may be worth capturing as fields.</p>
 
