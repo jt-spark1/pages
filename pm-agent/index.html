@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM-Agent · what it does</title>
+<meta name="description" content="A project teammate that lives in Slack. It watches your team's work, flags what's slipping, drafts your updates, and never changes anything without your say-so.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+  :root{
+    --paper:#f4eee1;
+    --paper-2:#efe7d6;
+    --card:#fffdf7;
+    --ink:#1d1b16;
+    --ink-soft:#4b463c;
+    --ink-faint:#8a8170;
+    --line:#e2d8c2;
+    --line-strong:#d3c6a8;
+    --green:#1f6b54;
+    --green-deep:#164e3e;
+    --green-soft:#e6efe7;
+    --amber:#d98a2b;
+    --amber-soft:#f6e7cc;
+    --clay:#b14f37;
+    --clay-soft:#f1ddd2;
+    --blue:#3a6ea5;
+    --shadow:0 1px 2px rgba(29,27,22,.06), 0 14px 34px -18px rgba(29,27,22,.28);
+    --shadow-soft:0 1px 2px rgba(29,27,22,.05), 0 8px 22px -16px rgba(29,27,22,.22);
+    --r:18px;
+    --maxw:1080px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    font-size:18px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* paper grain */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+  .wrap{position:relative;z-index:1;}
+
+  h1,h2,h3,h4{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.04;letter-spacing:-.01em;margin:0;}
+  p{margin:0;}
+  a{color:inherit;}
+  ::selection{background:var(--green);color:#fff;}
+
+  .shell{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:saturate(1.2) blur(8px);
+    background:rgba(244,238,225,.82);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-in{max-width:var(--maxw);margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:28px;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:"Fraunces";font-weight:600;font-size:20px;letter-spacing:-.01em;}
+  .brand .dot{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(150deg,var(--green),var(--green-deep));color:#fff;font-size:15px;box-shadow:0 4px 10px -4px rgba(22,78,62,.6);}
+  .nav-links{margin-left:auto;display:flex;gap:26px;font-size:14.5px;font-weight:500;color:var(--ink-soft);}
+  .nav-links a{text-decoration:none;position:relative;padding:4px 0;transition:color .2s;}
+  .nav-links a:hover{color:var(--green);}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;background:var(--green);transition:width .25s;}
+  .nav-links a:hover::after{width:100%;}
+  @media(max-width:760px){.nav-links{display:none;}}
+
+  /* ---------- reveal ---------- */
+  @keyframes reveal-in{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
+  .reveal{animation:reveal-in .7s cubic-bezier(.2,.7,.2,1) both;}
+  @media(prefers-reduced-motion:reduce){.reveal,.stagger>*{animation:none!important;opacity:1!important;transform:none!important;}}
+  .stagger>*{opacity:0;transform:translateY(18px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:72px 0 36px;position:relative;}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep);background:var(--green-soft);border:1px solid #cfe0d2;padding:7px 14px;border-radius:100px;}
+  .eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(31,107,84,.5);animation:pulse 2.4s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,107,84,.45);}70%{box-shadow:0 0 0 9px rgba(31,107,84,0);}100%{box-shadow:0 0 0 0 rgba(31,107,84,0);}}
+
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center;margin-top:26px;}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:38px;}}
+  h1.title{font-size:clamp(40px,6.4vw,74px);letter-spacing:-.025em;}
+  h1.title em{font-style:italic;color:var(--green);font-weight:500;}
+  .lede{margin-top:22px;font-size:clamp(18px,2.1vw,21px);color:var(--ink-soft);max-width:30em;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:13.5px;font-weight:500;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);padding:8px 13px;border-radius:100px;display:inline-flex;align-items:center;gap:7px;}
+  .chip b{font-weight:600;color:var(--ink);}
+
+  /* ---------- slack mock ---------- */
+  .slack{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .slack-bar{display:flex;align-items:center;gap:8px;padding:11px 15px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fffefb,#fbf6ec);}
+  .slack-bar .chan{font-weight:600;font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:6px;}
+  .slack-bar .chan .hash{color:var(--ink-faint);font-weight:700;}
+  .slack-bar .tag{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:#4a154b;padding:3px 9px;border-radius:6px;}
+  .slack-body{padding:6px 15px 14px;}
+  .msg{display:flex;gap:11px;padding:10px 0;}
+  .msg + .msg{border-top:1px solid #f1ead9;}
+  .av{width:38px;height:38px;border-radius:9px;flex:none;display:grid;place-items:center;font-weight:700;color:#fff;font-size:15px;}
+  .av--bot{background:linear-gradient(150deg,var(--green),var(--green-deep));}
+  .av--jt{background:linear-gradient(150deg,#3a6ea5,#2b527c);border-radius:50%;}
+  .av--maya{background:linear-gradient(150deg,#b14f37,#8f3d2b);border-radius:50%;}
+  .m-main{min-width:0;flex:1;}
+  .m-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .m-name{font-weight:700;font-size:15px;color:var(--ink);}
+  .m-badge{font-size:10px;font-weight:700;letter-spacing:.06em;color:#5a5547;background:#ece3d0;padding:1px 6px;border-radius:4px;text-transform:uppercase;}
+  .m-time{font-size:12px;color:var(--ink-faint);}
+  .m-text{font-size:15px;line-height:1.55;color:#2c2920;margin-top:3px;}
+  .m-text .lk{color:var(--blue);font-weight:600;text-decoration:none;}
+  .m-text strong{font-weight:700;color:var(--ink);}
+  .m-text .mention{color:var(--blue);background:#e8f0f8;border-radius:4px;padding:0 3px;font-weight:600;}
+  .m-callout{margin-top:9px;border-left:3px solid var(--line-strong);padding:4px 0 4px 12px;color:var(--ink-soft);font-size:14px;}
+  .reacts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+  .react{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;background:#f3edde;border:1px solid #e7ddc6;color:#544f42;padding:3px 9px;border-radius:100px;cursor:pointer;transition:transform .12s,background .15s,border-color .15s;user-select:none;}
+  .react:hover{transform:translateY(-1px);}
+  .react.is-go{background:var(--green-soft);border-color:#bcd8c4;color:var(--green-deep);}
+  .react.is-no{background:var(--clay-soft);border-color:#e6c6b9;color:var(--clay);}
+  .react .cnt{color:var(--ink-faint);font-weight:700;}
+  .btns{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap;}
+  .btn{font-family:inherit;font-size:14px;font-weight:600;border-radius:9px;padding:9px 15px;cursor:pointer;border:1px solid transparent;transition:transform .12s,box-shadow .15s,background .15s;display:inline-flex;align-items:center;gap:8px;}
+  .btn:active{transform:translateY(1px);}
+  .btn--go{background:var(--green);color:#fff;box-shadow:0 6px 14px -7px rgba(22,78,62,.8);}
+  .btn--go:hover{background:var(--green-deep);}
+  .btn--no{background:#fff;color:var(--ink-soft);border-color:var(--line-strong);}
+  .btn--no:hover{border-color:var(--clay);color:var(--clay);}
+  .done-flash{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--green-deep);font-size:14px;}
+  .thread-note{font-size:12.5px;color:var(--blue);font-weight:600;margin-top:9px;}
+
+  [x-cloak]{display:none!important;}
+  .fade-enter{animation:fadeUp .5s cubic-bezier(.2,.7,.2,1);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* ---------- sections ---------- */
+  section{padding:62px 0;position:relative;}
+  .sec-head{display:flex;align-items:flex-end;gap:18px;margin-bottom:36px;}
+  .sec-num{font-family:"Fraunces";font-size:15px;font-weight:600;color:var(--green);border:1px solid var(--line-strong);border-radius:100px;padding:5px 13px;flex:none;letter-spacing:.04em;}
+  .sec-title{font-size:clamp(28px,4vw,42px);letter-spacing:-.02em;}
+  .sec-sub{color:var(--ink-soft);max-width:34em;margin-top:10px;font-size:17px;}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent);border:0;margin:0;}
+
+  /* capability cards */
+  .cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  @media(max-width:760px){.cap-grid{grid-template-columns:1fr;}}
+  .cap{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px 24px 22px;box-shadow:var(--shadow-soft);transition:transform .25s,box-shadow .25s,border-color .25s;position:relative;overflow:hidden;}
+  .cap:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--line-strong);}
+  .cap .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:var(--green-soft);border:1px solid #cfe0d2;margin-bottom:15px;}
+  .cap h3{font-size:21px;margin-bottom:7px;}
+  .cap p{color:var(--ink-soft);font-size:15.5px;}
+  .cap .ex{margin-top:13px;font-size:13.5px;color:var(--green-deep);background:var(--green-soft);border-radius:9px;padding:9px 12px;font-style:italic;font-family:"Fraunces";}
+  .cap.amber .ic{background:var(--amber-soft);border-color:#ecd6ad;}
+  .cap.amber .ex{color:#9a661c;background:var(--amber-soft);}
+
+  /* control / steps */
+  .control-grid{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center;}
+  @media(max-width:900px){.control-grid{grid-template-columns:1fr;gap:34px;}}
+  .steps{counter-reset:s;display:flex;flex-direction:column;gap:6px;}
+  .step{display:flex;gap:16px;padding:16px 0;border-bottom:1px dashed var(--line-strong);}
+  .step:last-child{border-bottom:0;}
+  .step .n{counter-increment:s;font-family:"Fraunces";font-weight:600;font-size:18px;width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);}
+  .step:nth-child(2) .n{background:var(--amber);}
+  .step:nth-child(3) .n{background:var(--green);}
+  .step .n::before{content:counter(s);}
+  .step h4{font-size:18.5px;margin-bottom:3px;}
+  .step p{color:var(--ink-soft);font-size:15px;}
+  .guards{margin-top:22px;display:flex;flex-direction:column;gap:11px;}
+  .guard{display:flex;gap:11px;align-items:flex-start;font-size:15px;color:var(--ink-soft);}
+  .guard .gk{color:var(--green);font-weight:700;flex:none;margin-top:1px;}
+
+  /* won't do */
+  .wont{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:22px;padding:38px 42px;box-shadow:var(--shadow-soft);}
+  .wont .sec-num{color:var(--green);border-color:var(--line-strong);}
+  .wont .sec-title{color:var(--ink);}
+  .wont .sec-sub{color:var(--ink-soft);}
+  .wont-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 34px;margin-top:22px;}
+  @media(max-width:760px){.wont-list{grid-template-columns:1fr;}}
+  .wont-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);}
+  .wont-item .x{flex:none;width:23px;height:23px;border-radius:7px;display:grid;place-items:center;background:var(--clay-soft);color:var(--clay);font-weight:700;font-size:13px;margin-top:2px;}
+  .wont-item p{font-size:15px;color:var(--ink-soft);}
+  .wont-item b{color:var(--ink);font-weight:700;}
+
+  /* workflows */
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+  .tab{font-family:inherit;font-size:14.5px;font-weight:600;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);padding:11px 17px;border-radius:100px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;}
+  .tab:hover{border-color:var(--line-strong);}
+  .tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .tab .tn{font-family:"Fraunces";font-size:13px;opacity:.7;}
+  .flow{display:grid;grid-template-columns:.92fr 1.08fr;gap:40px;align-items:start;}
+  @media(max-width:900px){.flow{grid-template-columns:1fr;gap:30px;}}
+  .flow-steps{display:flex;flex-direction:column;gap:2px;}
+  .flow-step{display:flex;gap:15px;padding:15px 0;}
+  .flow-step .fn{font-family:"Fraunces";font-weight:600;font-size:15px;color:var(--green);width:30px;height:30px;flex:none;border-radius:50%;border:1.5px solid var(--green);display:grid;place-items:center;}
+  .flow-step h4{font-size:17px;margin-bottom:2px;}
+  .flow-step p{font-size:14.5px;color:var(--ink-soft);}
+  .flow-vis{position:sticky;top:90px;}
+  .scene-label{font-size:13px;font-weight:600;color:var(--ink-faint);margin-bottom:11px;letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
+  .scene-label::before{content:"";width:22px;height:1px;background:var(--line-strong);}
+
+  /* day timeline */
+  .day{position:relative;margin-top:14px;padding-left:8px;}
+  .day::before{content:"";position:absolute;left:80px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--green-soft),var(--line-strong),var(--amber-soft));}
+  @media(max-width:620px){.day::before{left:62px;}}
+  .tl{display:flex;gap:24px;padding:13px 0;align-items:flex-start;}
+  .tl .t{font-family:"Fraunces";font-weight:600;font-size:17px;color:var(--green-deep);width:62px;flex:none;text-align:right;padding-top:2px;}
+  .tl .knob{width:14px;height:14px;border-radius:50%;background:var(--card);border:2.5px solid var(--green);flex:none;margin-top:5px;position:relative;z-index:1;}
+  .tl.q .knob{border-color:var(--line-strong);}
+  .tl.amber .knob{border-color:var(--amber);}
+  .tl .c{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 16px;box-shadow:var(--shadow-soft);flex:1;}
+  .tl .c h4{font-size:16.5px;margin-bottom:2px;}
+  .tl .c p{font-size:14.5px;color:var(--ink-soft);}
+  .tl .c .who{font-size:12px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;}
+  .tl.q .c .who{color:var(--ink-faint);}
+
+  /* start */
+  .start-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;}
+  @media(max-width:760px){.start-grid{grid-template-columns:1fr;}}
+  .start-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;box-shadow:var(--shadow-soft);}
+  .start-card .sn{font-family:"Fraunces";color:var(--amber);font-size:15px;font-weight:600;}
+  .start-card h4{font-size:19px;margin:9px 0 7px;}
+  .start-card p{font-size:15px;color:var(--ink-soft);}
+
+  /* faq */
+  .faq{max-width:760px;margin:0 auto;}
+  .q{border-bottom:1px solid var(--line);}
+  .q-btn{width:100%;text-align:left;background:none;border:0;font-family:"Fraunces";font-weight:600;font-size:20px;color:var(--ink);padding:22px 44px 22px 0;cursor:pointer;position:relative;letter-spacing:-.01em;}
+  .q-btn .pm{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:1.5px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;color:var(--green);font-size:18px;transition:transform .3s,background .2s,color .2s;}
+  .q-btn[aria-expanded="true"] .pm{background:var(--green);color:#fff;border-color:var(--green);transform:translateY(-50%) rotate(45deg);}
+  .q-ans{overflow:hidden;color:var(--ink-soft);font-size:16px;padding-right:44px;}
+  .q-ans p{padding-bottom:22px;}
+
+  /* footer */
+  footer{padding:56px 0 40px;border-top:1px solid var(--line);margin-top:30px;}
+  .foot-in{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;}
+  .foot-brand{display:flex;align-items:center;gap:11px;font-family:"Fraunces";font-weight:600;font-size:18px;}
+  .foot-note{font-size:13px;color:var(--ink-faint);max-width:32em;}
+  .stamp{font-size:12px;color:var(--ink-faint);margin-top:8px;}
+
+  .pill-note{display:inline-block;font-size:12.5px;font-weight:600;color:var(--amber);background:var(--amber-soft);border:1px solid #ecd6ad;padding:4px 11px;border-radius:100px;margin-bottom:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <div class="brand"><span class="dot">🤖</span> PM-Agent</div>
+    <div class="nav-links">
+      <a href="#does">What it does</a>
+      <a href="#control">How control works</a>
+      <a href="#wont">Limits</a>
+      <a href="#flows">Workflows</a>
+      <a href="#day">A day</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="shell">
+    <div class="stagger">
+      <span class="eyebrow" style="animation-delay:.05s"><span class="pulse"></span> A teammate that lives in Slack</span>
+      <div class="hero-grid">
+        <div>
+          <h1 class="title" style="animation-delay:.12s">Your projects, <em>quietly</em> kept in order.</h1>
+          <p class="lede" style="animation-delay:.2s">PM-Agent watches your team's work, tells you what's slipping, and writes your status updates. It never changes anything without a thumbs-up from you.</p>
+          <div class="hero-meta" style="animation-delay:.28s">
+            <span class="chip"><b>Works</b> while you sleep</span>
+            <span class="chip"><b>Asks</b> before it acts</span>
+            <span class="chip"><b>Lives</b> in Slack you already use</span>
+          </div>
+        </div>
+        <div style="animation-delay:.34s">
+          <div class="scene-label">What you'd see in Slack</div>
+          <div class="slack">
+            <div class="slack-bar"><span class="chan"><span class="hash">#</span> pm-agent</span><span class="tag">Slack</span></div>
+            <div class="slack-body">
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">9:02 AM</span></div>
+                  <div class="m-text">Morning. A ticket has gone quiet: <a href="#" class="lk">Onboarding emails not sending</a> has sat <strong>6 days</strong> in progress with no owner. Want me to assign it to <strong>Maya</strong> and leave a note?</div>
+                  <div class="btns">
+                    <button class="btn btn--go">✓ Approve</button>
+                    <button class="btn btn--no">Not now</button>
+                  </div>
+                  <div class="thread-note">Tap a reaction or reply. Only you can approve.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- WHAT IT DOES -->
+<section id="does">
+  <div class="shell">
+    <div class="sec-head reveal">
+      <span class="sec-num">01</span>
+      <div><h2 class="sec-title">What PM-Agent does</h2><p class="sec-sub">Five jobs, in plain terms. Each one runs on its own and you can turn any of them off.</p></div>
+    </div>
+    <div class="cap-grid">
+      <div class="cap reveal">
+        <div class="ic">🧹</div>
+        <h3>Keeps the board tidy</h3>
+        <p>Finds tickets that have gone quiet, lost their owner, or never got an estimate, and offers to fix them.</p>
+        <div class="ex">"This ticket has no owner. Assign it to Sam?"</div>
+      </div>
+      <div class="cap reveal">
+        <div class="ic">⚠️</div>
+        <h3>Flags what's at risk</h3>
+        <p>Tells you which work is slipping, what's blocked, and whether the sprint still fits the time left.</p>
+        <div class="ex">"3 tickets are stalled and the sprint is 60% gone."</div>
+      </div>
+      <div class="cap reveal amber">
+        <div class="ic">✍️</div>
+        <h3>Writes your updates</h3>
+        <p>Drafts the morning standup note, the end-of-day recap, and release notes for the wider team.</p>
+        <div class="ex">"Here's today's recap. Post it to #team?"</div>
+      </div>
+      <div class="cap reveal">
+        <div class="ic">💬</div>
+        <h3>Answers questions</h3>
+        <p>Ask it in plain English and it answers from the live board, right in the Slack thread.</p>
+        <div class="ex">"What's at risk this sprint?" · "Summarize ticket 1242."</div>
+      </div>
+      <div class="cap reveal amber">
+        <div class="ic">🔗</div>
+        <h3>Chases blockers</h3>
+        <p>Notices when work is stuck waiting on a person or another team, and drafts a polite nudge for you to send.</p>
+        <div class="ex">"This has waited 4 days on Design. Nudge them?"</div>
+      </div>
+      <div class="cap reveal" style="display:flex;flex-direction:column;justify-content:center;background:var(--green-soft);border-color:#cfe0d2;">
+        <h3 style="color:var(--green-deep)">And it stays in its lane.</h3>
+        <p style="color:var(--green-deep);opacity:.85">It works with your project tracker and Slack. It does not touch code, customer data, or deployments. More on that below.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTROL -->
+<section id="control">
+  <div class="shell">
+    <div class="sec-head reveal">
+      <span class="sec-num">02</span>
+      <div><h2 class="sec-title">It always asks first</h2><p class="sec-sub">This is the rule the whole thing is built around. PM-Agent proposes. You decide. Then it acts. Try it on the right.</p></div>
+    </div>
+    <div class="control-grid">
+      <div class="reveal">
+        <div class="steps">
+          <div class="step"><div class="n"></div><div><h4>It notices something</h4><p>A ticket goes quiet, a due date is at risk, a recap is due. PM-Agent spots it on its own.</p></div></div>
+          <div class="step"><div class="n"></div><div><h4>It asks you in Slack</h4><p>You get a short, plain-language message with the exact change it wants to make. Tap the green check to approve, or wave it off.</p></div></div>
+          <div class="step"><div class="n"></div><div><h4>Only then does it act</h4><p>On your approval it makes the change and leaves a note showing what it did and that you approved it. No approval, no action.</p></div></div>
+        </div>
+        <div class="guards">
+          <div class="guard"><span class="gk">✓</span><div>Every message it posts is labeled <b>🤖 PM-Agent</b>, so no one mistakes it for a person.</div></div>
+          <div class="guard"><span class="gk">✓</span><div>Only people you put on the approver list can approve. Everyone else's reactions are ignored.</div></div>
+          <div class="guard"><span class="gk">✓</span><div>Say <b>"pause"</b> in Slack and it stops within the minute. Say "resume" to start it again.</div></div>
+        </div>
+      </div>
+
+      <!-- interactive demo -->
+      <div class="reveal" x-data="{ state:'pending' }">
+        <div class="scene-label">Live demo · tap a button</div>
+        <div class="slack">
+          <div class="slack-bar"><span class="chan"><span class="hash">#</span> pm-agent</span><span class="tag">Slack</span></div>
+          <div class="slack-body">
+            <div class="msg">
+              <div class="av av--bot">🤖</div>
+              <div class="m-main">
+                <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">9:02 AM</span></div>
+                <div class="m-text"><a href="#" class="lk" @click.prevent>Onboarding emails not sending</a> has sat <strong>6 days</strong> in progress with no owner. I'd like to <strong>assign it to Maya</strong> and add this note:</div>
+                <div class="m-callout">"Flagged by PM-Agent: no owner for 6 days. Assigning to Maya to confirm status."</div>
+
+                <!-- pending -->
+                <div x-show="state==='pending'" class="btns">
+                  <button class="btn btn--go" @click="state='approved'">✓ Approve</button>
+                  <button class="btn btn--no" @click="state='declined'">Not now</button>
+                </div>
+                <div x-show="state==='pending'" class="thread-note">You're on the approver list. Go ahead.</div>
+
+                <!-- approved -->
+                <template x-if="state==='approved'">
+                  <div class="fade-enter">
+                    <div class="reacts"><span class="react is-go">✅ <span class="cnt">1</span></span></div>
+                    <div class="thread-note">Approved by you · 9:03 AM</div>
+                  </div>
+                </template>
+
+                <!-- declined -->
+                <template x-if="state==='declined'">
+                  <div class="fade-enter">
+                    <div class="reacts"><span class="react is-no">❌ <span class="cnt">1</span></span></div>
+                    <div class="thread-note">Declined · PM-Agent will leave it alone</div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- agent follow-up after approval -->
+            <template x-if="state==='approved'">
+              <div class="msg fade-enter">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">9:03 AM</span></div>
+                  <div class="m-text">Done. Assigned <a href="#" class="lk" @click.prevent>Onboarding emails not sending</a> to <span class="mention">@Maya</span> and added the note. <strong>You approved this.</strong></div>
+                  <div class="done-flash">✓ Change made, and logged</div>
+                </div>
+              </div>
+            </template>
+
+            <!-- agent follow-up after decline -->
+            <template x-if="state==='declined'">
+              <div class="msg fade-enter">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">9:03 AM</span></div>
+                  <div class="m-text">No problem. I'll leave it as is and won't ask again about this one for a few days.</div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:12px">
+          <button class="tab" @click="state='pending'" x-show="state!=='pending'" x-cloak style="margin:0 auto">↺ Reset the demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WON'T DO -->
+<section id="wont">
+  <div class="shell">
+    <div class="wont reveal">
+      <div class="sec-head" style="margin-bottom:8px">
+        <span class="sec-num">03</span>
+        <div><h2 class="sec-title">What it won't do</h2><p class="sec-sub">The limits are the point. They're what make it safe to leave running.</p></div>
+      </div>
+      <div class="wont-list">
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't change anything without your approval.</b> Reading and noticing are free. Every change waits for a yes.</p></div>
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't post in your team's channels on its own.</b> It starts in watch-only mode. You decide where it's allowed to speak.</p></div>
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't nag.</b> It caps how much it sends, respects quiet hours, and won't repeat the same ask for days.</p></div>
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't touch your code or deployments.</b> It works with your project board and Slack. Nothing else, unless you connect it.</p></div>
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't decide for you.</b> It drafts the note, the nudge, the recap. You choose whether to send it.</p></div>
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't pretend to be human.</b> Every message is stamped as the agent, and every action it takes is written down.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOWS -->
+<section id="flows">
+  <div class="shell">
+    <div class="sec-head reveal">
+      <span class="sec-num">04</span>
+      <div><h2 class="sec-title">Workflows, start to finish</h2><p class="sec-sub">Three everyday moments, walked through step by step, with what you'd actually see in Slack.</p></div>
+    </div>
+
+    <div class="reveal" x-data="{ tab:'stale' }">
+      <div class="tabs">
+        <button class="tab" :class="tab==='stale'&&'active'" @click="tab='stale'"><span class="tn">A</span> A ticket goes stale</button>
+        <button class="tab" :class="tab==='ask'&&'active'" @click="tab='ask'"><span class="tn">B</span> You ask "what's at risk?"</button>
+        <button class="tab" :class="tab==='recap'&&'active'" @click="tab='recap'"><span class="tn">C</span> The 5pm recap</button>
+      </div>
+
+      <!-- A: stale -->
+      <div x-show="tab==='stale'" x-transition.opacity class="flow">
+        <div class="flow-steps">
+          <div class="flow-step"><div class="fn">1</div><div><h4>PM-Agent notices</h4><p>During its hourly check it sees a ticket that has been in progress 6 days with no movement and no owner.</p></div></div>
+          <div class="flow-step"><div class="fn">2</div><div><h4>It proposes a fix</h4><p>It posts one message to your <strong>#pm-agent</strong> channel: the ticket, why it flagged it, and the exact change it suggests.</p></div></div>
+          <div class="flow-step"><div class="fn">3</div><div><h4>You approve with a tap</h4><p>You react with ✅. If you'd rather not, you react ❌ and it drops the idea for a few days.</p></div></div>
+          <div class="flow-step"><div class="fn">4</div><div><h4>It makes the change and logs it</h4><p>It assigns the ticket, adds a short note on the ticket itself, and records that you approved it.</p></div></div>
+        </div>
+        <div class="flow-vis">
+          <div class="scene-label">In Slack</div>
+          <div class="slack">
+            <div class="slack-bar"><span class="chan"><span class="hash">#</span> pm-agent</span><span class="tag">Slack</span></div>
+            <div class="slack-body">
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">2:00 PM</span></div>
+                  <div class="m-text"><a href="#" class="lk" @click.prevent>Onboarding emails not sending</a> has been in progress <strong>6 days</strong> with no owner. Assign to <strong>Maya</strong> and add a note?</div>
+                  <div class="reacts"><span class="react is-go">✅ <span class="cnt">1</span></span><span class="react">👀 <span class="cnt">1</span></span></div>
+                  <div class="thread-note">Approved by Jonathan · 2:04 PM</div>
+                </div>
+              </div>
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">2:04 PM</span></div>
+                  <div class="m-text">Done. Assigned to <span class="mention">@Maya</span>, note added to the ticket. <strong>You approved this.</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B: ask -->
+      <div x-show="tab==='ask'" x-transition.opacity class="flow" x-cloak>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="fn">1</div><div><h4>You ask in plain English</h4><p>Mention it anywhere it can see, day or night: "@PM-Agent what's at risk this sprint?"</p></div></div>
+          <div class="flow-step"><div class="fn">2</div><div><h4>It reads the live board</h4><p>It checks every ticket in the current sprint right then. The answer is from now, not a stale report.</p></div></div>
+          <div class="flow-step"><div class="fn">3</div><div><h4>It answers in the thread</h4><p>A short, ranked summary you can read in 10 seconds, with the ticket names so you can click through.</p></div></div>
+          <div class="flow-step"><div class="fn">4</div><div><h4>Nothing changes</h4><p>Answering is read-only. It told you what it sees. It didn't move or edit a thing.</p></div></div>
+        </div>
+        <div class="flow-vis">
+          <div class="scene-label">In Slack</div>
+          <div class="slack">
+            <div class="slack-bar"><span class="chan"><span class="hash">#</span> sprint-planning</span><span class="tag">Slack</span></div>
+            <div class="slack-body">
+              <div class="msg">
+                <div class="av av--jt">JT</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">Jonathan</span><span class="m-time">11:18 AM</span></div>
+                  <div class="m-text"><span class="mention">@PM-Agent</span> what's at risk this sprint?</div>
+                </div>
+              </div>
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">11:18 AM</span></div>
+                  <div class="m-text">3 things stand out with 4 days left:<div class="m-callout" style="margin-top:8px;border-color:var(--clay)">• <strong>Blocked:</strong> <a href="#" class="lk" @click.prevent>Payment retry logic</a>, waiting on Finance since Tuesday.<br>• <strong>Stalled:</strong> <a href="#" class="lk" @click.prevent>Onboarding emails</a>, no movement in 6 days.<br>• <strong>Tight:</strong> the sprint has 12 points left and about 8 days of capacity.</div>Want me to draft a nudge for the blocked one?</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C: recap -->
+      <div x-show="tab==='recap'" x-transition.opacity class="flow" x-cloak>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="fn">1</div><div><h4>5pm rolls around</h4><p>At the end of the workday PM-Agent gathers everything that changed on the board since morning.</p></div></div>
+          <div class="flow-step"><div class="fn">2</div><div><h4>It drafts the recap</h4><p>Finished work, what moved forward, what's newly blocked. Written in normal language, not ticket-speak.</p></div></div>
+          <div class="flow-step"><div class="fn">3</div><div><h4>It shows you first</h4><p>The draft lands in your channel. You read it, tweak if you want, and approve it for the team channel.</p></div></div>
+          <div class="flow-step"><div class="fn">4</div><div><h4>It posts to the team</h4><p>Once you approve, it posts the recap to <strong>#team</strong>, clearly from PM-Agent.</p></div></div>
+        </div>
+        <div class="flow-vis">
+          <div class="scene-label">In Slack</div>
+          <div class="slack">
+            <div class="slack-bar"><span class="chan"><span class="hash">#</span> pm-agent</span><span class="tag">Slack</span></div>
+            <div class="slack-body">
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">5:00 PM</span></div>
+                  <div class="m-text">Here's today's recap for <strong>#team</strong>. Post it?
+                    <div class="m-callout" style="margin-top:8px"><strong>📋 What changed today</strong><br>✅ Shipped: password reset emails<br>🚀 Moved forward: 2 tickets into review<br>⚠️ Newly blocked: payment retry (waiting on Finance)</div>
+                  </div>
+                  <div class="btns"><button class="btn btn--go" @click.prevent>✓ Post to #team</button><button class="btn btn--no" @click.prevent>Edit first</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- A DAY -->
+<section id="day">
+  <div class="shell">
+    <div class="sec-head reveal">
+      <span class="sec-num">05</span>
+      <div><h2 class="sec-title">A day with PM-Agent</h2><p class="sec-sub">It keeps a steady rhythm during work hours and goes quiet outside them.</p></div>
+    </div>
+    <div class="day reveal">
+      <div class="tl q"><div class="t">6:00</div><div class="knob"></div><div class="c"><span class="who">Quiet start</span><h4>Wakes up, reads the board</h4><p>It catches up on what changed overnight. It doesn't post yet. Too early to bother anyone.</p></div></div>
+      <div class="tl"><div class="t">7:00</div><div class="knob"></div><div class="c"><span class="who">Standup</span><h4>Posts the morning digest</h4><p>A short "here's where things stand" note, ready before the day starts.</p></div></div>
+      <div class="tl"><div class="t">All day</div><div class="knob"></div><div class="c"><span class="who">Tidy + watch</span><h4>Checks in every hour</h4><p>Spots stale or ownerless tickets and risk, and proposes small fixes one at a time, never in a flood.</p></div></div>
+      <div class="tl amber"><div class="t">11:18</div><div class="knob"></div><div class="c"><span class="who">On demand</span><h4>You ask, it answers</h4><p>"What's at risk?" gets a straight answer from the live board, in seconds.</p></div></div>
+      <div class="tl"><div class="t">5:00</div><div class="knob"></div><div class="c"><span class="who">Recap</span><h4>Drafts the end-of-day summary</h4><p>Shows you what changed and offers to post it to the team.</p></div></div>
+      <div class="tl q"><div class="t">6:00</div><div class="knob"></div><div class="c"><span class="who">Winds down</span><h4>Goes quiet for the night</h4><p>No nudges after hours or on weekends. It's still there if you ask it something directly.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- GETTING STARTED -->
+<section id="start">
+  <div class="shell">
+    <div class="sec-head reveal">
+      <span class="sec-num">06</span>
+      <div><h2 class="sec-title">Getting started is small</h2><p class="sec-sub">You turn it on cautiously and open up one thing at a time, once you trust it.</p></div>
+    </div>
+    <div class="start-grid">
+      <div class="start-card reveal"><div class="sn">Step one</div><h4>Connect two tools</h4><p>Point it at your project tracker and add it to Slack. That's the whole setup. No new app for your team to learn.</p></div>
+      <div class="start-card reveal"><div class="sn">Step two</div><h4>Start in watch-only</h4><p>For the first while it only watches and drafts. It proposes, but every action stays off until you flip it on.</p></div>
+      <div class="start-card reveal"><div class="sn">Step three</div><h4>Open up as you trust it</h4><p>Turn on one job at a time: tidy first, then risk, then recaps. Pull any of them back whenever you want.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="shell">
+    <div class="sec-head reveal" style="justify-content:center;text-align:center;flex-direction:column;align-items:center;gap:10px">
+      <span class="sec-num">07</span>
+      <h2 class="sec-title">Honest answers</h2>
+    </div>
+    <div class="faq reveal" x-data="{ open:0 }">
+      <div class="q">
+        <button class="q-btn" :aria-expanded="open===1" @click="open=open===1?0:1">Will it spam us?<span class="pm">+</span></button>
+        <div class="q-ans" x-show="open===1" x-collapse><p>No. Proposals go to one channel you pick, not your team's channels. It caps how many it sends at once, and it won't repeat the same ask for days. Quiet hours and weekends are off.</p></div>
+      </div>
+      <div class="q">
+        <button class="q-btn" :aria-expanded="open===2" @click="open=open===2?0:2">Can it break something?<span class="pm">+</span></button>
+        <div class="q-ans" x-show="open===2" x-collapse><p>It can't change anything you didn't approve, and it can't touch code, customer data, or deployments at all. The worst it can do on its own is read the board and ask you a question.</p></div>
+      </div>
+      <div class="q">
+        <button class="q-btn" :aria-expanded="open===3" @click="open=open===3?0:3">Do we have to learn a new tool?<span class="pm">+</span></button>
+        <div class="q-ans" x-show="open===3" x-collapse><p>No. You use Slack the way you already do. Approving is a single reaction. Asking it something is a normal message.</p></div>
+      </div>
+      <div class="q">
+        <button class="q-btn" :aria-expanded="open===4" @click="open=open===4?0:4">Who's allowed to approve its actions?<span class="pm">+</span></button>
+        <div class="q-ans" x-show="open===4" x-collapse><p>Only the people you put on the approver list. If anyone else reacts to a proposal, it's ignored. The agent checks who approved before it acts.</p></div>
+      </div>
+      <div class="q">
+        <button class="q-btn" :aria-expanded="open===5" @click="open=open===5?0:5">What if we want it to stop right now?<span class="pm">+</span></button>
+        <div class="q-ans" x-show="open===5" x-collapse><p>Say "pause" in Slack and it stops within the minute. There's also an off switch on the machine it runs on. When you pause it mid-task, it won't sneak a change through.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="shell foot-in">
+    <div>
+      <div class="foot-brand"><span class="dot" style="width:26px;height:26px;border-radius:8px;display:inline-grid;place-items:center;background:linear-gradient(150deg,var(--green),var(--green-deep));color:#fff;font-size:15px">🤖</span> PM-Agent</div>
+      <div class="stamp">Proof-of-concept preview · for discussion · 2026-06-01</div>
+    </div>
+    <p class="foot-note">A project teammate for non-technical teams. It watches the work, flags what's slipping, and drafts your updates. You stay in charge of every change.</p>
+  </div>
+</footer>
+
+</div>
+
+<!-- interactivity handled by Alpine; entrance motion is CSS-only, never gates content visibility -->
+
+</body>
+</html>
