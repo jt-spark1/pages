@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>PM-Agent — Monitoring Dashboard (mockup)</title>
+<style>
+  :root{
+    --ink:#1a1a18; --muted:#6b6b66; --faint:#9a9a94;
+    --rule:#e4e3dd; --rule-strong:#cfcec7;
+    --bg:#fbfbf9; --panel:#ffffff;
+    --green:#2e7d32; --amber:#9a7b00; --red:#b3261e; --grey:#9a9a94; --blue:#1f5fa8;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:Georgia,Cambria,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:32px 20px 64px;
+  }
+  .wrap{max-width:860px; margin:0 auto}
+
+  .mock-banner{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.04em;
+    color:var(--amber); border:1px solid var(--rule-strong);
+    background:#fdfaf0; border-radius:4px;
+    padding:6px 10px; margin-bottom:22px; display:inline-block;
+  }
+
+  header.top{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+    border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:4px;
+  }
+  header.top h1{
+    font-family:var(--serif); font-weight:600; font-size:27px; margin:0;
+    letter-spacing:-.01em;
+  }
+  header.top h1 .sub{ color:var(--faint); font-weight:400; font-size:15px; font-style:italic }
+  .status-line{ font-family:var(--mono); font-size:13px; color:var(--muted) }
+  .updated{ font-family:var(--mono); font-size:11px; color:var(--faint); margin:6px 0 30px }
+
+  .dot{ display:inline-block; width:8px; height:8px; border-radius:50%;
+        background:var(--grey); margin-right:6px; vertical-align:middle; position:relative; top:-1px }
+  .dot.green{background:var(--green)} .dot.amber{background:var(--amber)}
+  .dot.red{background:var(--red)} .dot.grey{background:var(--grey)} .dot.blue{background:var(--blue)}
+
+  section{ margin:0 0 30px }
+  h2.sec{
+    font-family:var(--sans); font-weight:600; font-size:11.5px;
+    text-transform:uppercase; letter-spacing:.13em; color:var(--muted);
+    margin:0 0 10px; padding-bottom:5px; border-bottom:1px solid var(--rule);
+  }
+  h2.sec .count{ color:var(--faint); font-weight:500; letter-spacing:.05em }
+
+  /* health grid */
+  .health{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px 22px }
+  .health .cell .k{ font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em }
+  .health .cell .v{ font-family:var(--mono); font-size:14px; margin-top:2px }
+
+  table{ width:100%; border-collapse:collapse; font-size:14px }
+  td,th{ text-align:left; padding:7px 10px 7px 0; vertical-align:baseline; border-bottom:1px solid var(--rule) }
+  tr:last-child td{ border-bottom:none }
+  th{ font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.07em; font-weight:600; border-bottom:1px solid var(--rule) }
+  td.num,th.num{ font-family:var(--mono); text-align:right; white-space:nowrap }
+  .id{ font-family:var(--mono); color:var(--blue) }
+  .age,.ts{ font-family:var(--mono); color:var(--faint); white-space:nowrap }
+  .summary{ color:var(--ink) }
+  .reason{ color:var(--muted); font-style:italic }
+
+  .badge{ font-family:var(--mono); font-size:10.5px; letter-spacing:.03em;
+          color:var(--muted); border:1px solid var(--rule-strong); border-radius:3px;
+          padding:1px 6px; margin-left:8px }
+
+  .next{ font-family:var(--mono) }
+  .next b{ font-weight:600 }
+
+  /* cost */
+  .cost-top{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-bottom:14px }
+  .cost-top .blk .k{ font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em }
+  .cost-top .blk .big{ font-family:var(--mono); font-size:21px; margin-top:1px }
+  .cost-top .blk .calls{ font-family:var(--mono); font-size:11.5px; color:var(--faint) }
+  .breakdown{ display:grid; grid-template-columns:1fr 1fr; gap:0 34px }
+
+  footer{ margin-top:46px; padding-top:12px; border-top:1px solid var(--rule);
+          font-family:var(--mono); font-size:11px; color:var(--faint); line-height:1.7 }
+  .ok{color:var(--green)} .no{color:var(--red)}
+  @media(max-width:620px){
+    .health{grid-template-columns:repeat(2,1fr)} .cost-top{grid-template-columns:1fr}
+    .breakdown{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mock-banner">▲ MOCKUP — sample data, not a live system. For discussion only.</div>
+
+  <header class="top">
+    <h1>PM-Agent <span class="sub">— board hygiene</span></h1>
+    <div class="status-line"><span class="dot green"></span>alive · within working hours · not paused</div>
+  </header>
+  <div class="updated">local read-only view · 127.0.0.1:8787 · refreshed 4s ago</div>
+
+  <!-- HEALTH -->
+  <section>
+    <h2 class="sec">Health</h2>
+    <div class="health">
+      <div class="cell"><div class="k">Daemon</div><div class="v"><span class="dot green"></span>alive · 8s ago</div></div>
+      <div class="cell"><div class="k">Kill-switch</div><div class="v"><span class="dot green"></span>clear</div></div>
+      <div class="cell"><div class="k">Working hours</div><div class="v">Mon–Fri 09:00–18:00 ET</div></div>
+      <div class="cell"><div class="k">Now</div><div class="v">in hours</div></div>
+    </div>
+  </section>
+
+  <!-- LOOPS / NEXT RUN -->
+  <section>
+    <h2 class="sec">Loops &amp; next run</h2>
+    <table>
+      <thead><tr><th>Loop</th><th>Cadence</th><th>Last ran</th><th class="num">Next run</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dot green"></span>board_hygiene</td>
+          <td class="age">every 60m</td>
+          <td class="ts">13:30 · 13m ago</td>
+          <td class="num next"><b>47m</b></td>
+          <td><span class="badge">dry-run</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot grey"></span>waiting_on_requestor</td>
+          <td class="age">07:00 · 17:00</td>
+          <td class="ts">07:00</td>
+          <td class="num next">17:00</td>
+          <td><span class="badge">dry-run</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PENDING -->
+  <section>
+    <h2 class="sec">Pending approvals <span class="count">· 2 awaiting</span></h2>
+    <table>
+      <thead><tr><th>Proposed</th><th>Loop</th><th class="num">Age</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="summary">Assign <span class="id">@dev-a</span> as owner of <span class="id">Story&nbsp;#1042</span> — Lead-routing rule cleanup</span></td>
+          <td class="age">board_hygiene</td>
+          <td class="num age">3m</td>
+        </tr>
+        <tr>
+          <td><span class="summary">Comment on <span class="id">Story&nbsp;#1018</span> — Opportunity-stage validation (waiting on requestor)</span></td>
+          <td class="age">board_hygiene</td>
+          <td class="num age">11m</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- RECENT -->
+  <section>
+    <h2 class="sec">Recent decisions</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td style="white-space:nowrap"><span class="ok">✓ executed</span></td>
+          <td><span class="summary">Transition <span class="id">Story&nbsp;#1007</span> → In Review</span></td>
+          <td class="age">by U0SAMPLE</td>
+          <td class="ts num">12:04</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap"><span class="no">✕ rejected</span></td>
+          <td><span class="summary">Assign owner to <span class="id">Story&nbsp;#1003</span></span> <span class="reason">— “not ready, needs scoping”</span></td>
+          <td class="age">by U0SAMPLE</td>
+          <td class="ts num">11:48</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap"><span class="ok">✓ executed</span></td>
+          <td><span class="summary">Comment on <span class="id">Story&nbsp;#0995</span> — stale 9d in progress</span></td>
+          <td class="age">auto</td>
+          <td class="ts num">10:31</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- COST -->
+  <section>
+    <h2 class="sec">Cost</h2>
+    <div class="cost-top">
+      <div class="blk"><div class="k">Last 24h</div><div class="big">$0.42</div><div class="calls">14 calls</div></div>
+      <div class="blk"><div class="k">Last 7d</div><div class="big">$3.10</div><div class="calls">96 calls</div></div>
+      <div class="blk"><div class="k">All time</div><div class="big">$14.88</div><div class="calls">412 calls</div></div>
+    </div>
+    <div class="breakdown">
+      <table>
+        <thead><tr><th>By loop · 7d</th><th class="num">$</th></tr></thead>
+        <tbody>
+          <tr><td>board_hygiene</td><td class="num">3.10</td></tr>
+          <tr><td>q&amp;a / digest</td><td class="num">0.00</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>By model · 7d</th><th class="num">$</th></tr></thead>
+        <tbody>
+          <tr><td>claude-haiku-4-5</td><td class="num">0.88</td></tr>
+          <tr><td>claude-sonnet-4-6</td><td class="num">2.22</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    pm-agent · read-only monitoring view (backlog I1) · loopback-only, no external writes<br>
+    all values above are fictional sample data — no real stories, owners, Slack IDs, or PHI
+  </footer>
+
+</div>
+</body>
+</html>
