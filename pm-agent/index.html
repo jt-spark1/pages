@@ -282,7 +282,7 @@
       <div class="hero-grid">
         <div>
           <h1 class="title" style="animation-delay:.12s">Your projects, <em>quietly</em> kept in order.</h1>
-          <p class="lede" style="animation-delay:.2s">PM-Agent watches your team's work, tells you what's slipping, and writes your status updates. It never changes anything without a thumbs-up from you.</p>
+          <p class="lede" style="animation-delay:.2s">PM-Agent watches your team's work, tells you what's slipping, and writes your status updates. You stay in charge of every change.</p>
           <div class="hero-meta" style="animation-delay:.28s">
             <span class="chip"><b>Works</b> while you sleep</span>
             <span class="chip"><b>Asks</b> before it acts</span>
@@ -348,9 +348,9 @@
       </div>
       <div class="cap reveal amber">
         <div class="ic">🔗</div>
-        <h3>Chases blockers</h3>
-        <p>Notices when work is stuck waiting on a person or another team, and drafts a polite nudge for you to send.</p>
-        <div class="ex">"This has waited 4 days on Design. Nudge them?"</div>
+        <h3>Chases blockers, then closes the loop</h3>
+        <p>Notices when work is stuck waiting on someone and asks them the <em>actual</em> open question — pulled from the conversation, not a generic ping. Switch it on and it can act on their reply for you.</p>
+        <div class="ex">They reply "it's fixed" → it moves the ticket back into progress and tells you.</div>
       </div>
       <div class="cap reveal" style="display:flex;flex-direction:column;justify-content:center;background:var(--green-soft);border-color:#cfe0d2;">
         <h3 style="color:var(--green-deep)">And it stays in its lane.</h3>
@@ -464,7 +464,7 @@
         <div><h2 class="sec-title">What it won't do</h2><p class="sec-sub">The limits are the point. They're what make it safe to leave running.</p></div>
       </div>
       <div class="wont-list">
-        <div class="wont-item"><span class="x">✕</span><p><b>It won't change anything without your approval.</b> Reading and noticing are free. Every change waits for a yes.</p></div>
+        <div class="wont-item"><span class="x">✕</span><p><b>It won't change anything without your say-so.</b> Every change waits for your yes. The one exception is a follow-up you switch on yourself — when someone answers a question it asked for you, it takes the small, reversible next step.</p></div>
         <div class="wont-item"><span class="x">✕</span><p><b>It won't post in your team's channels on its own.</b> It starts in watch-only mode. You decide where it's allowed to speak.</p></div>
         <div class="wont-item"><span class="x">✕</span><p><b>It won't nag.</b> It caps how much it sends, respects quiet hours, and won't repeat the same ask for days.</p></div>
         <div class="wont-item"><span class="x">✕</span><p><b>It won't touch your code or deployments.</b> It works with your project board and Slack. Nothing else, unless you connect it.</p></div>
@@ -488,6 +488,7 @@
         <button class="tab" :class="tab==='stale'&&'active'" @click="tab='stale'"><span class="tn">A</span> A ticket goes stale</button>
         <button class="tab" :class="tab==='ask'&&'active'" @click="tab='ask'"><span class="tn">B</span> You ask "what's at risk?"</button>
         <button class="tab" :class="tab==='recap'&&'active'" @click="tab='recap'"><span class="tn">C</span> The 5pm recap</button>
+        <button class="tab" :class="tab==='reply'&&'active'" @click="tab='reply'"><span class="tn">D</span> A follow-up answers itself</button>
       </div>
 
       <!-- A: stale -->
@@ -584,6 +585,46 @@
         </div>
       </div>
 
+      <!-- D: reply round-trip -->
+      <div x-show="tab==='reply'" x-transition.opacity class="flow" x-cloak>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="fn">1</div><div><h4>It asks the real question</h4><p>A ticket is waiting on a teammate. PM-Agent asks them the <strong>exact</strong> open question it's stuck on — in a message that includes you, so you see it too.</p></div></div>
+          <div class="flow-step"><div class="fn">2</div><div><h4>They reply in plain words</h4><p>"Yep, that's sorted on our side — go ahead." No form, no buttons. They just answer.</p></div></div>
+          <div class="flow-step"><div class="fn">3</div><div><h4>It does the obvious next step</h4><p>It reads the answer and moves the ticket back into progress. No extra approval needed here — their answer <em>is</em> the go-ahead, and this is a follow-up you switched on.</p></div></div>
+          <div class="flow-step"><div class="fn">4</div><div><h4>You were in the room the whole time</h4><p>You saw the exchange, and it notes the change on the ticket. It only does this for the one ticket it asked about, and only small, reversible moves — never reassigning or anything it can't undo.</p></div></div>
+        </div>
+        <div class="flow-vis">
+          <div class="scene-label">In Slack · a message with you in it</div>
+          <div class="slack">
+            <div class="slack-bar"><span class="chan"><span class="hash">#</span> you · Maya · PM-Agent</span><span class="tag">Slack</span></div>
+            <div class="slack-body">
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">10:12 AM</span></div>
+                  <div class="m-text">Hi <span class="mention">@Maya</span> — quick one on <a href="#" class="lk" @click.prevent>Onboarding emails not sending</a>: are you still blocked on the email keys, or is that sorted?</div>
+                </div>
+              </div>
+              <div class="msg">
+                <div class="av av--maya">M</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">Maya</span><span class="m-time">10:30 AM</span></div>
+                  <div class="m-text">All set on our side — go ahead.</div>
+                </div>
+              </div>
+              <div class="msg">
+                <div class="av av--bot">🤖</div>
+                <div class="m-main">
+                  <div class="m-head"><span class="m-name">PM-Agent</span><span class="m-badge">App</span><span class="m-time">10:30 AM</span></div>
+                  <div class="m-text">Thanks — moved <a href="#" class="lk" @click.prevent>Onboarding emails not sending</a> back to <strong>In Progress</strong>.</div>
+                  <div class="done-flash">✓ Change made, and logged</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -641,7 +682,7 @@
       </div>
       <div class="q">
         <button class="q-btn" :aria-expanded="open===2" @click="open=open===2?0:2">Can it break something?<span class="pm">+</span></button>
-        <div class="q-ans" x-show="open===2" x-collapse><p>It can't change anything you didn't approve, and it can't touch code, customer data, or deployments at all. The worst it can do on its own is read the board and ask you a question.</p></div>
+        <div class="q-ans" x-show="open===2" x-collapse><p>It can't touch code, customer data, or deployments at all — only your project board and Slack. Changes to the board wait for your approval, and the one step it can take on its own (closing the loop on a follow-up you turned on) is always reversible. Out of the box, the worst it can do is read the board and ask you a question.</p></div>
       </div>
       <div class="q">
         <button class="q-btn" :aria-expanded="open===3" @click="open=open===3?0:3">Do we have to learn a new tool?<span class="pm">+</span></button>
@@ -655,6 +696,10 @@
         <button class="q-btn" :aria-expanded="open===5" @click="open=open===5?0:5">What if we want it to stop right now?<span class="pm">+</span></button>
         <div class="q-ans" x-show="open===5" x-collapse><p>Say "pause" in Slack and it stops within the minute. There's also an off switch on the machine it runs on. When you pause it mid-task, it won't sneak a change through.</p></div>
       </div>
+      <div class="q">
+        <button class="q-btn" :aria-expanded="open===6" @click="open=open===6?0:6">Can it ever act without asking me each time?<span class="pm">+</span></button>
+        <div class="q-ans" x-show="open===6" x-collapse><p>Out of the box, no — every change waits for your tap. There's one feature you can choose to switch on: when it follows up with someone on a question you asked and they reply, it can do the obvious next step — like moving that ticket back into progress — without pinging you again, because their answer is the go-ahead. It only touches that one ticket, only makes reversible moves, you're in the conversation, and it stays off until you turn it on.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -664,7 +709,7 @@
   <div class="shell foot-in">
     <div>
       <div class="foot-brand"><span class="dot" style="width:26px;height:26px;border-radius:8px;display:inline-grid;place-items:center;background:linear-gradient(150deg,var(--green),var(--green-deep));color:#fff;font-size:15px">🤖</span> PM-Agent</div>
-      <div class="stamp">Proof-of-concept preview · for discussion · 2026-06-01</div>
+      <div class="stamp">Proof-of-concept preview · for discussion · 2026-06-02</div>
     </div>
     <p class="foot-note">A project teammate for non-technical teams. It watches the work, flags what's slipping, and drafts your updates. You stay in charge of every change.</p>
   </div>
