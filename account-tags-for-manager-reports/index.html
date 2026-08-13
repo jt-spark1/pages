@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Account Tags and empty manager reports are in the test environment and ready for first-slice approval.">
+<title>Account tags for manager reports</title>
+<style>
+  :root {
+    /* ---- THEME: change these to re-brand the whole page ---- */
+    --color-accent: #2563EB;        /* primary brand / hero eyebrow / action */
+    --color-accent-light: #EFF4FF;
+    --color-accent-dark: #1D4ED8;
+    --color-success: #15803D;       /* "tested / passed / live" */
+    --color-success-light: #F0FDF4;
+    --color-warning: #B45309;       /* "pending / awaiting" */
+    --color-warning-light: #FFFBEB;
+    --color-danger: #B91C1C;        /* "fail" */
+    --color-danger-light: #FEF2F2;
+    --color-purple: #7C3AED;        /* secondary status */
+    --color-purple-light: #F5F3FF;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, system-ui, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+    /* ---- neutrals (rarely need changing) ---- */
+    --color-ink: #1F2937;
+    --color-muted: #6B7280;
+    --color-faint-text: #9CA3AF;
+    --color-border: #E5E7EB;
+    --color-surface-2: #F9FAFB;
+    --color-white: #FFFFFF;
+    --color-bg: #FBFBFA;
+    --color-hero-bg: #F3F4F6;
+    /* ---- scale ---- */
+    --type-xs: 11px; --type-sm: 13px; --type-md: 16px;
+    --type-lg: 20px; --type-xl: 25px; --type-2xl: 32px; --type-3xl: 40px;
+    --weight-book: 400; --weight-medium: 500; --weight-bold: 700; --weight-black: 800;
+    --leading-tight: 1.2; --leading-normal: 1.5; --leading-relaxed: 1.6;
+    --space-xxs: 4px; --space-xs: 8px; --space-sm: 16px; --space-md: 24px;
+    --space-lg: 32px; --space-xl: 48px; --space-2xl: 64px;
+    --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --radius-pill: 100px; --radius-circle: 50%;
+    --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.06);
+    --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.12);
+    --ease-out: cubic-bezier(0.2, 0, 0, 1);
+    --duration-fast: 150ms;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-family);
+    font-size: var(--type-md);
+    font-weight: var(--weight-book);
+    color: var(--color-ink);
+    background: var(--color-bg);
+    line-height: var(--leading-relaxed);
+    min-height: 100vh;
+  }
+
+  a { color: var(--color-accent); text-decoration: none; transition: color var(--duration-fast) var(--ease-out); }
+  a:hover { text-decoration: underline; }
+  strong { font-weight: var(--weight-bold); }
+
+  p { font-size: var(--type-md); color: var(--color-ink); line-height: var(--leading-relaxed); margin-bottom: var(--space-sm); }
+  p:last-child { margin-bottom: 0; }
+
+  h2 { font-size: var(--type-xl); font-weight: var(--weight-bold); color: var(--color-ink); line-height: var(--leading-tight); margin-bottom: var(--space-sm); }
+  h3 { font-size: var(--type-lg); font-weight: var(--weight-medium); color: var(--color-ink); line-height: var(--leading-tight); margin-bottom: var(--space-xs); }
+
+  ul, ol { padding-left: var(--space-md); margin-bottom: var(--space-sm); }
+  ul li, ol li { margin-bottom: var(--space-xs); line-height: var(--leading-relaxed); }
+  ul li::marker { color: var(--color-faint-text); }
+
+  code { font-family: var(--font-mono); font-size: 0.875em; background: var(--color-surface-2); color: var(--color-ink); padding: 2px 6px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+
+  /* HERO */
+  .hero { background: var(--color-hero-bg); padding: var(--space-2xl) var(--space-sm) var(--space-xl); text-align: center; }
+  .hero-eyebrow { font-size: var(--type-sm); font-weight: var(--weight-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-xs); }
+  .hero-title { font-size: var(--type-3xl); font-weight: var(--weight-black); color: var(--color-ink); line-height: var(--leading-tight); margin: 0 auto var(--space-sm); max-width: 820px; letter-spacing: -0.5px; }
+  .hero-subtitle { font-size: var(--type-lg); color: var(--color-muted); margin: 0 auto var(--space-md); max-width: 720px; line-height: var(--leading-normal); }
+  .hero-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: var(--space-md); }
+  .status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: var(--type-sm); font-weight: var(--weight-bold); padding: 6px 16px; border-radius: var(--radius-pill); border: 1px solid transparent; }
+  .status-badge.passed { background: var(--color-success-light); color: var(--color-success); border-color: #BBF7D0; }
+  .status-badge.pending { background: var(--color-warning-light); color: var(--color-warning); border-color: #FDE68A; }
+  .status-badge.merged { background: var(--color-purple-light); color: var(--color-purple); border-color: #DDD6FE; }
+  .status-badge.rolling { background: var(--color-accent-light); color: var(--color-accent); border-color: #BFDBFE; }
+  .status-badge.live { background: var(--color-success-light); color: var(--color-success); border-color: #BBF7D0; }
+  .hero-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-xs); align-items: center; font-size: var(--type-sm); color: var(--color-muted); }
+  .meta-sep::before { content: '\00b7'; color: var(--color-faint-text); margin: 0 var(--space-xxs); }
+
+  /* LAYOUT */
+  .content-body { max-width: 1040px; margin: 0 auto; padding: var(--space-xl) var(--space-lg) var(--space-2xl); }
+
+  .content-card { background: var(--color-white); border-radius: var(--radius-lg); padding: var(--space-lg) 40px; margin-bottom: var(--space-md); box-shadow: var(--shadow-card); border-top: 3px solid var(--color-accent); }
+  .content-card.summary { border-top-color: var(--color-success); }
+
+  /* WHAT CHANGED LIST */
+  .change-list { list-style: none; padding-left: 0; margin-bottom: 0; }
+  .change-list li { display: flex; gap: var(--space-sm); padding: 14px 0; border-bottom: 1px solid var(--color-border); margin-bottom: 0; align-items: flex-start; }
+  .change-list li:last-child { border-bottom: none; }
+  .change-check { flex-shrink: 0; width: 24px; height: 24px; border-radius: var(--radius-circle); background: var(--color-success); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: var(--weight-bold); margin-top: 2px; }
+  .change-text { flex: 1; }
+  .change-text .what { font-weight: var(--weight-bold); color: var(--color-ink); display: block; margin-bottom: 2px; }
+  .change-text .detail { font-size: var(--type-sm); color: var(--color-muted); }
+
+  /* GALLERY SECTION HEADER */
+  .gallery-intro { text-align: center; max-width: 720px; margin: var(--space-xl) auto var(--space-lg); }
+  .gallery-intro h2 { font-size: var(--type-2xl); margin-bottom: var(--space-xs); }
+  .gallery-intro p { color: var(--color-muted); font-size: var(--type-md); }
+
+  /* SHOT CARD - screenshots are the highlight */
+  .shot { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: var(--space-xl); overflow: hidden; }
+  .shot-header { display: flex; align-items: flex-start; gap: var(--space-sm); padding: var(--space-md) var(--space-lg) var(--space-sm); }
+  .shot-number { flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-circle); background: var(--color-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: var(--type-lg); font-weight: var(--weight-black); }
+  .shot-titles { flex: 1; }
+  .shot-title { font-size: var(--type-lg); font-weight: var(--weight-bold); color: var(--color-ink); line-height: var(--leading-tight); margin-bottom: 2px; }
+  .shot-subtitle { font-size: var(--type-sm); color: var(--color-muted); }
+  .shot-look { margin: 0 var(--space-lg) var(--space-md); padding: 12px var(--space-sm); background: var(--color-success-light); border-left: 4px solid var(--color-success); border-radius: var(--radius-md); font-size: var(--type-sm); line-height: var(--leading-normal); }
+  .shot-look strong { color: var(--color-success); }
+  .shot-figure { margin: 0; background: var(--color-surface-2); border-top: 1px solid var(--color-border); padding: var(--space-md) var(--space-lg) var(--space-lg); }
+  .shot-zoom { display: block; width: 100%; padding: 0; border: none; background: none; cursor: zoom-in; position: relative; }
+  .shot-figure img { display: block; width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--color-border); box-shadow: var(--shadow-float); transition: transform var(--duration-fast) var(--ease-out); }
+  .shot-zoom:hover img { transform: scale(1.005); }
+  .shot-zoom:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; border-radius: var(--radius-md); }
+  .shot-zoom .zoom-hint { position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; gap: 5px; font-size: var(--type-xs); font-weight: var(--weight-bold); color: #fff; background: rgba(31,41,55,0.6); padding: 5px 11px; border-radius: var(--radius-pill); opacity: 0; transition: opacity var(--duration-fast) var(--ease-out); pointer-events: none; }
+  .shot-zoom:hover .zoom-hint, .shot-zoom:focus-visible .zoom-hint { opacity: 1; }
+  .shot-caption { text-align: center; font-size: var(--type-xs); color: var(--color-faint-text); margin-top: var(--space-xs); }
+
+  /* EVIDENCE-LED (fallback when there are no screenshots) */
+  .evidence-block { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: var(--space-md); padding: var(--space-lg) 40px; border-left: 4px solid var(--color-accent); }
+  .evidence-block h3 { margin-bottom: var(--space-xs); }
+  .evidence-block .evidence-detail { font-size: var(--type-sm); color: var(--color-muted); margin-bottom: var(--space-sm); }
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin: var(--space-sm) 0; }
+  .ba-cell { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-sm); }
+  .ba-cell .ba-label { font-size: var(--type-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); margin-bottom: var(--space-xxs); }
+  .ba-cell.before { background: var(--color-surface-2); }
+  .ba-cell.after { background: var(--color-success-light); }
+  .metric-row { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin: var(--space-sm) 0; }
+  .metric { flex: 1; min-width: 140px; border: 1px solid var(--color-border); border-left-width: 4px; border-left-color: var(--color-accent); border-radius: var(--radius-md); padding: var(--space-sm); }
+  .metric .metric-value { font-size: var(--type-2xl); font-weight: var(--weight-black); color: var(--color-ink); line-height: 1; }
+  .metric .metric-label { font-size: var(--type-sm); color: var(--color-muted); margin-top: var(--space-xxs); }
+  .table-wrapper { overflow-x: auto; margin: var(--space-sm) 0; border-radius: var(--radius-md); border: 1px solid var(--color-border); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--type-sm); }
+  thead { background: var(--color-surface-2); }
+  thead th { text-align: left; padding: 10px var(--space-sm); border-bottom: 2px solid var(--color-border); font-size: var(--type-xs); text-transform: uppercase; letter-spacing: 0.06em; font-weight: var(--weight-bold); }
+  tbody td { padding: 10px var(--space-sm); border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  .result-pass { color: var(--color-success); font-weight: var(--weight-bold); }
+  .result-fail { color: var(--color-danger); font-weight: var(--weight-bold); }
+
+  /* LIGHTBOX */
+  .lightbox { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; background: rgba(31,41,55,0.55); backdrop-filter: blur(2px); padding: var(--space-lg); cursor: zoom-out; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 86vh; border-radius: var(--radius-md); box-shadow: 0 24px 60px rgba(0,0,0,0.35); cursor: zoom-out; }
+  .lightbox-close { position: absolute; top: 20px; right: 28px; width: 44px; height: 44px; border-radius: var(--radius-circle); border: none; background: rgba(255,255,255,0.14); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background var(--duration-fast) var(--ease-out); }
+  .lightbox-close:hover { background: rgba(255,255,255,0.28); }
+  .lightbox-caption { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.88); font-size: var(--type-sm); padding: 0 var(--space-lg); }
+
+  /* CALLOUT */
+  .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-sm); font-size: var(--type-sm); line-height: var(--leading-normal); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-info { border-color: var(--color-accent); background: var(--color-accent-light); }
+  .callout-success { border-color: var(--color-success); background: var(--color-success-light); }
+  .callout-action { border-color: var(--color-accent); background: var(--color-accent-light); }
+  .callout-action strong { color: var(--color-accent-dark); }
+
+  .pill { display: inline-block; padding: 2px 9px; border-radius: var(--radius-pill); font-size: var(--type-xs); font-weight: var(--weight-bold); }
+  .pill-new { background: var(--color-success-light); color: var(--color-success); }
+
+  /* FOOTER NOTE */
+  .footer-note { max-width: 1040px; margin: 0 auto; padding: var(--space-md) var(--space-lg) var(--space-2xl); font-size: var(--type-sm); color: var(--color-muted); text-align: center; }
+  .footer-note a { color: var(--color-accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 744px) {
+    .hero { padding: var(--space-xl) var(--space-sm) var(--space-lg); }
+    .hero-title { font-size: var(--type-xl); }
+    .hero-subtitle { font-size: var(--type-md); }
+    .content-body { padding: var(--space-lg) var(--space-sm) var(--space-xl); }
+    .content-card { padding: var(--space-md) var(--space-sm); }
+    .shot-header { padding: var(--space-sm) var(--space-sm) var(--space-xs); }
+    .shot-look { margin: 0 var(--space-sm) var(--space-sm); }
+    .shot-figure { padding: var(--space-sm); }
+    .evidence-block { padding: var(--space-md) var(--space-sm); }
+    .ba-grid { grid-template-columns: 1fr; }
+    h2 { font-size: var(--type-lg); }
+  }
+
+  @media print {
+    body { background: white; }
+    .shot, .content-card, .evidence-block { box-shadow: none; border: 1px solid var(--color-border); break-inside: avoid; }
+    .shot-figure img { box-shadow: none; }
+    a { color: var(--color-ink); text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow">Account tagging &middot; Account Managers</div>
+  <h1 class="hero-title">Agencies can be labeled, and manager reports are ready to fill</h1>
+  <p class="hero-subtitle">A first slice in the test environment: the tag field and two empty reports. Lists are not filled yet.</p>
+  <div class="hero-badges">
+    <span class="status-badge passed">&#10003; Tested in the test environment</span>
+    <span class="status-badge pending">&#8226; Awaiting your approval</span>
+    <span class="status-badge rolling">&#8594; Live in production: not yet</span>
+  </div>
+  <div class="hero-meta">
+    <span>Requested by Chris Spagnuolo</span>
+    <span class="meta-sep"></span>
+    <span>Built and checked by Jonathan Tang</span>
+    <span class="meta-sep"></span>
+    <span>Checked as System Administrator</span>
+    <span class="meta-sep"></span>
+    <span>Updated August 13, 2026</span>
+  </div>
+</header>
+
+<div class="content-body">
+
+  <div class="content-card summary">
+    <h2>What changed</h2>
+    <p>Three things are in the test environment. Tag values and the account list are still waiting on Chris.</p>
+    <ul class="change-list">
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">Account Tags field</span>
+          <span class="detail">A free-text box on each agency, parked at the bottom of System Information until the Monday layout work rehomes it.</span>
+        </span>
+      </li>
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">Only admins can type in it for now</span>
+          <span class="detail">Everyone can see the field. Account Managers cannot edit yet, so hashtag spelling stays locked until the real list arrives.</span>
+        </span>
+      </li>
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">Two empty manager reports</span>
+          <span class="detail">AM Account Book groups agencies by Spark Account Manager. Account Tags Inventory is a simple list. Neither report filters on a tag yet.</span>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="gallery-intro">
+    <h2>The evidence</h2>
+    <p>No screenshots on this page. Below is what was checked in the test environment, plus the click-throughs still waiting on you.</p>
+  </div>
+
+  <div class="evidence-block">
+    <h3>Before and after</h3>
+    <p class="evidence-detail">Agencies had no shared tag field. Manager reporting had nothing to filter on.</p>
+    <div class="ba-grid">
+      <div class="ba-cell before"><div class="ba-label">Before</div>No Account Tags field. No Account Management Reports folder.</div>
+      <div class="ba-cell after"><div class="ba-label">After</div>Account Tags exists. Two empty reports sit in Account Management Reports.</div>
+    </div>
+  </div>
+
+  <div class="evidence-block">
+    <h3>What we counted</h3>
+    <p class="evidence-detail">The test environment is small. Production lists are not loaded.</p>
+    <div class="metric-row">
+      <div class="metric"><div class="metric-value">8</div><div class="metric-label">Agencies in the test environment</div></div>
+      <div class="metric"><div class="metric-value">2</div><div class="metric-label">Empty reports created</div></div>
+      <div class="metric"><div class="metric-value">0</div><div class="metric-label">Agencies tagged (waiting on the list)</div></div>
+    </div>
+  </div>
+
+  <div class="evidence-block">
+    <h3>Test cases</h3>
+    <p class="evidence-detail">Imported from the UAT script. Report and permission checks were run. Typing a sample tag was not run, because filling tags is blocked until the real list arrives.</p>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Scenario</th><th>Expected behavior</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Admin can save a temporary value on Account Tags</td><td>The field saves a short test value with no error.</td><td>Not run (no sample tags until the real list arrives)</td></tr>
+          <tr><td>Clearing Account Tags saves a blank value</td><td>The field can be emptied and saved.</td><td>Not run (follows the save test)</td></tr>
+          <tr><td>Account Tags appears in System Information and is editable for an admin</td><td>The field is a free-text box at the bottom of System Information, not on the highlights panel.</td><td>Not run (needs a click on the agency page)</td></tr>
+          <tr><td>AM Account Book runs grouped by Spark Account Manager with no tag filter</td><td>The report runs. Tag text is a column, not a filter.</td><td class="result-pass">&#10003; Pass (8 agencies; one blank-manager group)</td></tr>
+          <tr><td>Account Tags Inventory lists agencies with the Account Tags column and no tag filter</td><td>Simple list report. Tag column present and currently blank.</td><td class="result-pass">&#10003; Pass</td></tr>
+          <tr><td>Account Managers cannot edit Account Tags yet</td><td>Admin edit only. The Account Management edit permission does not include this field.</td><td class="result-pass">&#10003; Pass</td></tr>
+          <tr><td>Spark Account Manager still displays on the agency page</td><td>The manager lookup is unchanged.</td><td>Not run (needs a click on the agency page)</td></tr>
+          <tr><td>FY27 Focus still displays in its existing section</td><td>Account Tags did not replace growth-plan fields.</td><td>Not run (needs a click on the agency page)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="evidence-detail">Open in the test environment: <a href="https://sparkadvisors--sparkdev.sandbox.lightning.force.com/lightning/r/Account/001WI00001OaBt3YAF/view">UAT Test Agency</a> · <a href="https://sparkadvisors--sparkdev.sandbox.lightning.force.com/lightning/r/Report/00OWI0000068CtN2AU/view">AM Account Book</a> · <a href="https://sparkadvisors--sparkdev.sandbox.lightning.force.com/lightning/r/Report/00OWI0000068CtO2AU/view">Account Tags Inventory</a></p>
+  </div>
+
+  <div class="content-card">
+    <h2>Where this stands</h2>
+    <div class="callout callout-success">
+      <p><strong>Tested in the test environment.</strong> The field and both empty reports exist. The manager-book report ran against all 8 test agencies. Tag values were not loaded, on purpose.</p>
+    </div>
+    <div class="callout callout-action">
+      <p><strong>Action needed from you:</strong> Approve this first slice. Then send the Account Manager roster (Kim vs Stephanie) and the matchable target account list so we can fill tags and clone per-manager reports. Reply in this chat or on the 1:1 follow-up thread.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  Account tagging · Captured in a test environment on August 13, 2026. Not live in production. For questions, contact Jonathan Tang.
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged screenshot" onclick="closeLightbox()">
+  <button type="button" class="lightbox-close" aria-label="Close" onclick="closeLightbox()">&times;</button>
+  <img id="lightboxImg" src="" alt="" onclick="closeLightbox()">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+  var lightboxCaption = document.getElementById('lightboxCaption');
+
+  function openLightbox(src, caption) {
+    lightboxImg.setAttribute('src', src);
+    lightboxImg.setAttribute('alt', caption || '');
+    lightboxCaption.textContent = caption || '';
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightbox();
+    }
+  });
+</script>
+
+</body>
+</html>
