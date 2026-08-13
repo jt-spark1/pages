@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  uat-results-page TEMPLATE  (org-agnostic, themeable sign-off page)
+  ============================================================================
+  Close a lost opportunity in one step — sign-off page
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="New Close Opportunity (Lost) button walks sellers through closing a lost deal and requires a reason. Tested and passed in the test environment.">
+<title>Close a lost opportunity in one step</title>
+<style>
+  :root {
+    /* ---- THEME: change these to re-brand the whole page ---- */
+    --color-accent: #2563EB;        /* primary brand / hero eyebrow / action */
+    --color-accent-light: #EFF4FF;
+    --color-accent-dark: #1D4ED8;
+    --color-success: #15803D;       /* "tested / passed / live" */
+    --color-success-light: #F0FDF4;
+    --color-warning: #B45309;       /* "pending / awaiting" */
+    --color-warning-light: #FFFBEB;
+    --color-danger: #B91C1C;        /* "fail" */
+    --color-danger-light: #FEF2F2;
+    --color-purple: #7C3AED;        /* secondary status */
+    --color-purple-light: #F5F3FF;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, system-ui, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+    /* ---- neutrals (rarely need changing) ---- */
+    --color-ink: #1F2937;
+    --color-muted: #6B7280;
+    --color-faint-text: #9CA3AF;
+    --color-border: #E5E7EB;
+    --color-surface-2: #F9FAFB;
+    --color-white: #FFFFFF;
+    --color-bg: #FBFBFA;
+    --color-hero-bg: #F3F4F6;
+    /* ---- scale ---- */
+    --type-xs: 11px; --type-sm: 13px; --type-md: 16px;
+    --type-lg: 20px; --type-xl: 25px; --type-2xl: 32px; --type-3xl: 40px;
+    --weight-book: 400; --weight-medium: 500; --weight-bold: 700; --weight-black: 800;
+    --leading-tight: 1.2; --leading-normal: 1.5; --leading-relaxed: 1.6;
+    --space-xxs: 4px; --space-xs: 8px; --space-sm: 16px; --space-md: 24px;
+    --space-lg: 32px; --space-xl: 48px; --space-2xl: 64px;
+    --radius-sm: 4px; --radius-md: 8px; --radius-lg: 16px; --radius-pill: 100px; --radius-circle: 50%;
+    --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.06);
+    --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.12);
+    --ease-out: cubic-bezier(0.2, 0, 0, 1);
+    --duration-fast: 150ms;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-family);
+    font-size: var(--type-md);
+    font-weight: var(--weight-book);
+    color: var(--color-ink);
+    background: var(--color-bg);
+    line-height: var(--leading-relaxed);
+    min-height: 100vh;
+  }
+
+  a { color: var(--color-accent); text-decoration: none; transition: color var(--duration-fast) var(--ease-out); }
+  a:hover { text-decoration: underline; }
+  strong { font-weight: var(--weight-bold); }
+
+  p { font-size: var(--type-md); color: var(--color-ink); line-height: var(--leading-relaxed); margin-bottom: var(--space-sm); }
+  p:last-child { margin-bottom: 0; }
+
+  h2 { font-size: var(--type-xl); font-weight: var(--weight-bold); color: var(--color-ink); line-height: var(--leading-tight); margin-bottom: var(--space-sm); }
+  h3 { font-size: var(--type-lg); font-weight: var(--weight-medium); color: var(--color-ink); line-height: var(--leading-tight); margin-bottom: var(--space-xs); }
+
+  ul, ol { padding-left: var(--space-md); margin-bottom: var(--space-sm); }
+  ul li, ol li { margin-bottom: var(--space-xs); line-height: var(--leading-relaxed); }
+  ul li::marker { color: var(--color-faint-text); }
+
+  code { font-family: var(--font-mono); font-size: 0.875em; background: var(--color-surface-2); color: var(--color-ink); padding: 2px 6px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+
+  /* HERO */
+  .hero { background: var(--color-hero-bg); padding: var(--space-2xl) var(--space-sm) var(--space-xl); text-align: center; }
+  .hero-eyebrow { font-size: var(--type-sm); font-weight: var(--weight-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-xs); }
+  .hero-title { font-size: var(--type-3xl); font-weight: var(--weight-black); color: var(--color-ink); line-height: var(--leading-tight); margin: 0 auto var(--space-sm); max-width: 820px; letter-spacing: -0.5px; }
+  .hero-subtitle { font-size: var(--type-lg); color: var(--color-muted); margin: 0 auto var(--space-md); max-width: 720px; line-height: var(--leading-normal); }
+  .hero-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: var(--space-md); }
+  .status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: var(--type-sm); font-weight: var(--weight-bold); padding: 6px 16px; border-radius: var(--radius-pill); border: 1px solid transparent; }
+  .status-badge.passed { background: var(--color-success-light); color: var(--color-success); border-color: #BBF7D0; }
+  .status-badge.pending { background: var(--color-warning-light); color: var(--color-warning); border-color: #FDE68A; }
+  .status-badge.merged { background: var(--color-purple-light); color: var(--color-purple); border-color: #DDD6FE; }
+  .status-badge.rolling { background: var(--color-accent-light); color: var(--color-accent); border-color: #BFDBFE; }
+  .status-badge.live { background: var(--color-success-light); color: var(--color-success); border-color: #BBF7D0; }
+  .hero-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-xs); align-items: center; font-size: var(--type-sm); color: var(--color-muted); }
+  .meta-sep::before { content: '\00b7'; color: var(--color-faint-text); margin: 0 var(--space-xxs); }
+
+  /* LAYOUT */
+  .content-body { max-width: 1040px; margin: 0 auto; padding: var(--space-xl) var(--space-lg) var(--space-2xl); }
+
+  .content-card { background: var(--color-white); border-radius: var(--radius-lg); padding: var(--space-lg) 40px; margin-bottom: var(--space-md); box-shadow: var(--shadow-card); border-top: 3px solid var(--color-accent); }
+  .content-card.summary { border-top-color: var(--color-success); }
+
+  /* WHAT CHANGED LIST */
+  .change-list { list-style: none; padding-left: 0; margin-bottom: 0; }
+  .change-list li { display: flex; gap: var(--space-sm); padding: 14px 0; border-bottom: 1px solid var(--color-border); margin-bottom: 0; align-items: flex-start; }
+  .change-list li:last-child { border-bottom: none; }
+  .change-check { flex-shrink: 0; width: 24px; height: 24px; border-radius: var(--radius-circle); background: var(--color-success); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: var(--weight-bold); margin-top: 2px; }
+  .change-text { flex: 1; }
+  .change-text .what { font-weight: var(--weight-bold); color: var(--color-ink); display: block; margin-bottom: 2px; }
+  .change-text .detail { font-size: var(--type-sm); color: var(--color-muted); }
+
+  /* GALLERY SECTION HEADER */
+  .gallery-intro { text-align: center; max-width: 720px; margin: var(--space-xl) auto var(--space-lg); }
+  .gallery-intro h2 { font-size: var(--type-2xl); margin-bottom: var(--space-xs); }
+  .gallery-intro p { color: var(--color-muted); font-size: var(--type-md); }
+
+  /* SHOT CARD - screenshots are the highlight */
+  .shot { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: var(--space-xl); overflow: hidden; }
+  .shot-header { display: flex; align-items: flex-start; gap: var(--space-sm); padding: var(--space-md) var(--space-lg) var(--space-sm); }
+  .shot-number { flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-circle); background: var(--color-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: var(--type-lg); font-weight: var(--weight-black); }
+  .shot-titles { flex: 1; }
+  .shot-title { font-size: var(--type-lg); font-weight: var(--weight-bold); color: var(--color-ink); line-height: var(--leading-tight); margin-bottom: 2px; }
+  .shot-subtitle { font-size: var(--type-sm); color: var(--color-muted); }
+  .shot-look { margin: 0 var(--space-lg) var(--space-md); padding: 12px var(--space-sm); background: var(--color-success-light); border-left: 4px solid var(--color-success); border-radius: var(--radius-md); font-size: var(--type-sm); line-height: var(--leading-normal); }
+  .shot-look strong { color: var(--color-success); }
+  .shot-figure { margin: 0; background: var(--color-surface-2); border-top: 1px solid var(--color-border); padding: var(--space-md) var(--space-lg) var(--space-lg); }
+  .shot-zoom { display: block; width: 100%; padding: 0; border: none; background: none; cursor: zoom-in; position: relative; }
+  .shot-figure img { display: block; width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--color-border); box-shadow: var(--shadow-float); transition: transform var(--duration-fast) var(--ease-out); }
+  .shot-zoom:hover img { transform: scale(1.005); }
+  .shot-zoom:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; border-radius: var(--radius-md); }
+  .shot-zoom .zoom-hint { position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; gap: 5px; font-size: var(--type-xs); font-weight: var(--weight-bold); color: #fff; background: rgba(31,41,55,0.6); padding: 5px 11px; border-radius: var(--radius-pill); opacity: 0; transition: opacity var(--duration-fast) var(--ease-out); pointer-events: none; }
+  .shot-zoom:hover .zoom-hint, .shot-zoom:focus-visible .zoom-hint { opacity: 1; }
+  .shot-caption { text-align: center; font-size: var(--type-xs); color: var(--color-faint-text); margin-top: var(--space-xs); }
+
+  /* EVIDENCE-LED (fallback when there are no screenshots) */
+  .evidence-block { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: var(--space-md); padding: var(--space-lg) 40px; border-left: 4px solid var(--color-accent); }
+  .evidence-block h3 { margin-bottom: var(--space-xs); }
+  .evidence-block .evidence-detail { font-size: var(--type-sm); color: var(--color-muted); margin-bottom: var(--space-sm); }
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin: var(--space-sm) 0; }
+  .ba-cell { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-sm); }
+  .ba-cell .ba-label { font-size: var(--type-xs); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); margin-bottom: var(--space-xxs); }
+  .ba-cell.before { background: var(--color-surface-2); }
+  .ba-cell.after { background: var(--color-success-light); }
+  .metric-row { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin: var(--space-sm) 0; }
+  .metric { flex: 1; min-width: 140px; border: 1px solid var(--color-border); border-left-width: 4px; border-left-color: var(--color-accent); border-radius: var(--radius-md); padding: var(--space-sm); }
+  .metric .metric-value { font-size: var(--type-2xl); font-weight: var(--weight-black); color: var(--color-ink); line-height: 1; }
+  .metric .metric-label { font-size: var(--type-sm); color: var(--color-muted); margin-top: var(--space-xxs); }
+  .table-wrapper { overflow-x: auto; margin: var(--space-sm) 0; border-radius: var(--radius-md); border: 1px solid var(--color-border); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--type-sm); }
+  thead { background: var(--color-surface-2); }
+  thead th { text-align: left; padding: 10px var(--space-sm); border-bottom: 2px solid var(--color-border); font-size: var(--type-xs); text-transform: uppercase; letter-spacing: 0.06em; font-weight: var(--weight-bold); }
+  tbody td { padding: 10px var(--space-sm); border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  .result-pass { color: var(--color-success); font-weight: var(--weight-bold); }
+  .result-fail { color: var(--color-danger); font-weight: var(--weight-bold); }
+
+  /* LIGHTBOX */
+  .lightbox { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; background: rgba(31,41,55,0.55); backdrop-filter: blur(2px); padding: var(--space-lg); cursor: zoom-out; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 86vh; border-radius: var(--radius-md); box-shadow: 0 24px 60px rgba(0,0,0,0.35); cursor: zoom-out; }
+  .lightbox-close { position: absolute; top: 20px; right: 28px; width: 44px; height: 44px; border-radius: var(--radius-circle); border: none; background: rgba(255,255,255,0.14); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background var(--duration-fast) var(--ease-out); }
+  .lightbox-close:hover { background: rgba(255,255,255,0.28); }
+  .lightbox-caption { position: absolute; bottom: 22px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,0.88); font-size: var(--type-sm); padding: 0 var(--space-lg); }
+
+  /* CALLOUT */
+  .callout { border-left: 4px solid; border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); margin-bottom: var(--space-sm); font-size: var(--type-sm); line-height: var(--leading-normal); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-info { border-color: var(--color-accent); background: var(--color-accent-light); }
+  .callout-success { border-color: var(--color-success); background: var(--color-success-light); }
+  .callout-action { border-color: var(--color-accent); background: var(--color-accent-light); }
+  .callout-action strong { color: var(--color-accent-dark); }
+
+  .pill { display: inline-block; padding: 2px 9px; border-radius: var(--radius-pill); font-size: var(--type-xs); font-weight: var(--weight-bold); }
+  .pill-new { background: var(--color-success-light); color: var(--color-success); }
+
+  /* FOOTER NOTE */
+  .footer-note { max-width: 1040px; margin: 0 auto; padding: var(--space-md) var(--space-lg) var(--space-2xl); font-size: var(--type-sm); color: var(--color-muted); text-align: center; }
+  .footer-note a { color: var(--color-accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 744px) {
+    .hero { padding: var(--space-xl) var(--space-sm) var(--space-lg); }
+    .hero-title { font-size: var(--type-xl); }
+    .hero-subtitle { font-size: var(--type-md); }
+    .content-body { padding: var(--space-lg) var(--space-sm) var(--space-xl); }
+    .content-card { padding: var(--space-md) var(--space-sm); }
+    .shot-header { padding: var(--space-sm) var(--space-sm) var(--space-xs); }
+    .shot-look { margin: 0 var(--space-sm) var(--space-sm); }
+    .shot-figure { padding: var(--space-sm); }
+    .evidence-block { padding: var(--space-md) var(--space-sm); }
+    .ba-grid { grid-template-columns: 1fr; }
+    h2 { font-size: var(--type-lg); }
+  }
+
+  @media print {
+    body { background: white; }
+    .shot, .content-card, .evidence-block { box-shadow: none; border: 1px solid var(--color-border); break-inside: avoid; }
+    .shot-figure img { box-shadow: none; }
+    a { color: var(--color-ink); text-decoration: none; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Opportunity close &middot; Sales</div>
+  <h1 class="hero-title">Close a lost opportunity in one step</h1>
+  <p class="hero-subtitle">A new button walks the seller through Closed Lost and asks for a reason, so they do not have to change the stage on the path.</p>
+  <div class="hero-badges">
+    <span class="status-badge passed">&#10003; Tested &amp; passed</span>
+    <span class="status-badge pending">&#8226; Awaiting your approval</span>
+    <span class="status-badge pending">Live in production: not yet</span>
+  </div>
+  <div class="hero-meta">
+    <span>Requested from the sales conversation</span>
+    <span class="meta-sep"></span>
+    <span>Built &amp; tested by Jonathan Tang</span>
+    <span class="meta-sep"></span>
+    <span>Validated in the test environment</span>
+    <span class="meta-sep"></span>
+    <span>Updated August 13, 2026</span>
+  </div>
+</header>
+
+<div class="content-body">
+
+  <div class="content-card summary">
+    <h2>What changed</h2>
+    <p>Three things changed. Each is shown in the screens below.</p>
+    <ul class="change-list">
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">New button on the opportunity</span>
+          <span class="detail">Close Opportunity (Lost) sits next to Edit and Clone on an open deal.</span>
+        </span>
+      </li>
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">Short confirmation screen</span>
+          <span class="detail">Confirm the close and pick a lost reason. Reason is required before the deal can be closed.</span>
+        </span>
+      </li>
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">Button disappears after close</span>
+          <span class="detail">Once the deal is closed, the button is hidden so nobody retries it.</span>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="gallery-intro">
+    <h2>See it in action</h2>
+    <p>Each shot is the real screen from the test. Click any image to enlarge.</p>
+  </div>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">1</div>
+      <div class="shot-titles">
+        <div class="shot-title">Button on an open deal</div>
+        <div class="shot-subtitle">Opportunity still in Discovery</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> Close Opportunity (Lost) is visible in the top action row, between Clone and Upload TTM Support.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/01-button-visible.png', 'Close Opportunity (Lost) button on an open deal')">
+        <img src="screenshots/01-button-visible.png" alt="Open opportunity showing the Close Opportunity (Lost) button in the top action row" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Open test opportunity, Discovery stage</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">2</div>
+      <div class="shot-titles">
+        <div class="shot-title">Confirmation screen</div>
+        <div class="shot-subtitle">After clicking the button</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> The deal name, a required Closed Reason dropdown, and a Close as Lost button.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/02-flow-screen.png', 'Confirmation screen with required Closed Reason')">
+        <img src="screenshots/02-flow-screen.png" alt="Confirmation screen asking to mark the deal Closed Lost with a required Closed Reason dropdown" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Reason starts empty and is marked required</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">3</div>
+      <div class="shot-titles">
+        <div class="shot-title">Reason left blank</div>
+        <div class="shot-subtitle">Close as Lost clicked with no reason</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> The screen does not close. Closed Reason is still empty.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/03-reason-required.png', 'Screen stays open when Closed Reason is blank')">
+        <img src="screenshots/03-reason-required.png" alt="Same confirmation screen still open after trying to close without a reason" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Required reason blocks the close</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">4</div>
+      <div class="shot-titles">
+        <div class="shot-title">Reason chosen</div>
+        <div class="shot-subtitle">Ready to close</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> Closed Reason shows Timing.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/04-reason-selected.png', 'Closed Reason set to Timing')">
+        <img src="screenshots/04-reason-selected.png" alt="Confirmation screen with Closed Reason set to Timing" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">One of the nine lost reasons selected</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">5</div>
+      <div class="shot-titles">
+        <div class="shot-title">Success</div>
+        <div class="shot-subtitle">After Close as Lost</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> The message says the deal is now Closed Lost.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/05-success.png', 'Success message: the deal is now Closed Lost')">
+        <img src="screenshots/05-success.png" alt="Success screen confirming the opportunity is now Closed Lost" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Close finished in one step</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">6</div>
+      <div class="shot-titles">
+        <div class="shot-title">After close</div>
+        <div class="shot-subtitle">Same opportunity, reopened</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> The Close Opportunity (Lost) button is gone. The path shows Closed Lost.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/06-button-hidden-after-close.png', 'Button hidden after the deal is Closed Lost')">
+        <img src="screenshots/06-button-hidden-after-close.png" alt="Closed opportunity with Closed Lost selected on the path and no Close Opportunity (Lost) button" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Button hidden once the deal is closed</div>
+    </div>
+  </figure>
+
+  <div class="content-card">
+    <h2>Where this stands</h2>
+    <div class="callout callout-success">
+      <p><strong>Tested and passed.</strong> We opened an in-progress deal, confirmed the button, tried to close with no reason (blocked), then closed with Timing. The deal moved to Closed Lost with that reason, and the button disappeared.</p>
+    </div>
+    <div class="callout callout-action">
+      <p><strong>Action needed from you:</strong> Please approve these results. Reply in the chat where you received this page.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  Opportunity close &middot; Screenshots captured in a test environment. For questions, contact Jonathan Tang.
+</div>
+
+<!-- LIGHTBOX (keep verbatim; only needed in gallery mode but harmless to leave) -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged screenshot" onclick="closeLightbox()">
+  <button type="button" class="lightbox-close" aria-label="Close" onclick="closeLightbox()">&times;</button>
+  <img id="lightboxImg" src="" alt="" onclick="closeLightbox()">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+  var lightboxCaption = document.getElementById('lightboxCaption');
+
+  function openLightbox(src, caption) {
+    lightboxImg.setAttribute('src', src);
+    lightboxImg.setAttribute('alt', caption || '');
+    lightboxCaption.textContent = caption || '';
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightbox();
+    }
+  });
+</script>
+
+</body>
+</html>
