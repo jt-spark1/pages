@@ -198,7 +198,7 @@
 <header class="hero">
   <div class="hero-eyebrow">Account tagging &middot; Account Managers</div>
   <h1 class="hero-title">Agencies can be labeled, and manager reports are ready to fill</h1>
-  <p class="hero-subtitle">A first slice in the test environment: the tag field and two empty reports. Lists are not filled yet.</p>
+  <p class="hero-subtitle">A first slice in the test environment: the tag field and two manager reports, filled with sample data so you can see the shape.</p>
   <div class="hero-badges">
     <span class="status-badge passed">&#10003; Tested in the test environment</span>
     <span class="status-badge pending">&#8226; Awaiting your approval</span>
@@ -219,7 +219,7 @@
 
   <div class="content-card summary">
     <h2>What changed</h2>
-    <p>Three things are in the test environment. Tag values and the account list are still waiting on Chris.</p>
+    <p>Three things are in the test environment. Sample tags and managers are on the eight test agencies only. The real list is still waiting on Chris.</p>
     <ul class="change-list">
       <li>
         <span class="change-check">&#10003;</span>
@@ -238,7 +238,7 @@
       <li>
         <span class="change-check">&#10003;</span>
         <span class="change-text">
-          <span class="what">Two empty manager reports</span>
+          <span class="what">Two manager reports</span>
           <span class="detail">AM Account Book groups agencies by Spark Account Manager. Account Tags Inventory is a simple list. Neither report filters on a tag yet.</span>
         </span>
       </li>
@@ -247,7 +247,7 @@
 
   <div class="gallery-intro">
     <h2>See it in action</h2>
-    <p>Each shot is the real screen in the test environment. Click any image to enlarge. Tags are blank on purpose until the real list arrives.</p>
+    <p>Each shot is the real screen in the test environment. Click any image to enlarge. Tag values and manager names are sample data, not the production book.</p>
   </div>
 
   <figure class="shot">
@@ -259,14 +259,14 @@
       </div>
     </div>
     <div class="shot-look">
-      <strong>What to look for:</strong> Account Tags sits in the right column of System Information, under Last Modified By, next to Airtable Record Id. It is empty. The pencil means an admin can edit it.
+      <strong>What to look for:</strong> Account Tags sits in the right column of System Information, under Last Modified By. Sample values #Legacy and #Aug2026List are saved. The pencil means an admin can edit it.
     </div>
     <div class="shot-figure">
-      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/01-account-tags-system-information.png', 'Account Tags sits in System Information at the bottom of Details. Empty. An admin can edit.')">
-        <img src="screenshots/01-account-tags-system-information.png" alt="Agency record Details tab showing Account Tags empty in System Information" loading="lazy">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/01-account-tags-system-information.png', 'Account Tags sits in System Information at the bottom of Details. Sample tags saved. An admin can edit.')">
+        <img src="screenshots/01-account-tags-system-information.png" alt="Agency record System Information showing Account Tags with sample hashtags" loading="lazy">
         <span class="zoom-hint">&#128269; Click to enlarge</span>
       </button>
-      <div class="shot-caption">System Information at the bottom of Details. Help icon and edit pencil are both present.</div>
+      <div class="shot-caption">System Information at the bottom of Details. Sample tags, help icon, and edit pencil.</div>
     </div>
   </figure>
 
@@ -279,14 +279,14 @@
       </div>
     </div>
     <div class="shot-look">
-      <strong>What to look for:</strong> Agencies group by Spark Account Manager. Account Tags is a column, not a filter. Every tag cell is blank because lists are not loaded yet. The test environment has no managers assigned, so all eight agencies sit in one blank group.
+      <strong>What to look for:</strong> Agencies group by Spark Account Manager: Chris Spagnuolo (4) and Jonathan Tang (4). Account Tags is a column, not a filter. Sample hashtags are filled so the report is readable.
     </div>
     <div class="shot-figure">
-      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/02-am-account-book.png', 'AM Account Book groups by Spark Account Manager. Account Tags is a column, not a filter. Tags blank on purpose.')">
-        <img src="screenshots/02-am-account-book.png" alt="AM Account Book report grouped by Spark Account Manager with a blank Account Tags column" loading="lazy">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/02-am-account-book.png', 'AM Account Book groups by Spark Account Manager. Account Tags is a column, not a filter. Sample tags filled.')">
+        <img src="screenshots/02-am-account-book.png" alt="AM Account Book grouped by Chris Spagnuolo and Jonathan Tang with sample Account Tags" loading="lazy">
         <span class="zoom-hint">&#128269; Click to enlarge</span>
       </button>
-      <div class="shot-caption">Eight test agencies. Tag column present. No tag filter applied.</div>
+      <div class="shot-caption">Eight test agencies in two manager groups. No tag filter applied.</div>
     </div>
   </figure>
 
@@ -299,21 +299,21 @@
       </div>
     </div>
     <div class="shot-look">
-      <strong>What to look for:</strong> A flat list of agencies with Account Tags as a column. Same blank tags. No tag filter.
+      <strong>What to look for:</strong> A flat list of the same eight agencies. Spark Account Manager and Account Tags are both filled with sample values. No tag filter.
     </div>
     <div class="shot-figure">
-      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/03-account-tags-inventory.png', 'Inventory list with Account Tags column blank. No tag filter.')">
-        <img src="screenshots/03-account-tags-inventory.png" alt="Account Tags Inventory report listing agencies with a blank Account Tags column" loading="lazy">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/03-account-tags-inventory.png', 'Inventory list with sample Account Tags and managers. No tag filter.')">
+        <img src="screenshots/03-account-tags-inventory.png" alt="Account Tags Inventory listing agencies with sample tags and managers" loading="lazy">
         <span class="zoom-hint">&#128269; Click to enlarge</span>
       </button>
-      <div class="shot-caption">Same eight agencies. Account Tags column is there and empty.</div>
+      <div class="shot-caption">Same eight agencies. Tags and managers are sample data.</div>
     </div>
   </figure>
 
   <div class="content-card">
     <h2>Where this stands</h2>
     <div class="callout callout-success">
-      <p><strong>Tested in the test environment.</strong> The field shows on the agency page. Both empty reports run. Tag values were not loaded, on purpose.</p>
+      <p><strong>Tested in the test environment.</strong> The field shows on the agency page. Both reports run with sample tags and two manager groups. This is not the production book.</p>
     </div>
     <div class="callout callout-action">
       <p><strong>Action needed from you:</strong> Approve this first slice. Then send the Account Manager roster (Kim vs Stephanie) and the matchable target account list so we can fill tags and clone per-manager reports. Reply in this chat or on the 1:1 follow-up thread.</p>
