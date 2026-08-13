@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Account Tags is live in production. Agencies can carry list-membership labels on the Details tab.">
-<title>Account Tags is live</title>
+<meta name="description" content="Account Tags is live. Screenshots below are from the sandbox, filled with sample data.">
+<title>Account tags for manager reports</title>
 <style>
   :root {
     /* ---- THEME: change these to re-brand the whole page ---- */
@@ -197,10 +197,11 @@
 
 <header class="hero">
   <div class="hero-eyebrow">Account tagging &middot; Account Managers</div>
-  <h1 class="hero-title">Agencies can carry list-membership labels</h1>
-  <p class="hero-subtitle">Account Tags is live. It sits at the bottom of System Information on Details. Values stay empty until the real list arrives.</p>
+  <h1 class="hero-title">Agencies can be labeled, and manager reports are ready to fill</h1>
+  <p class="hero-subtitle">The field is live. Screenshots below are from the sandbox, filled with sample data so you can see the shape.</p>
   <div class="hero-badges">
     <span class="status-badge passed">&#10003; Live in production</span>
+    <span class="status-badge rolling">Screenshots from the sandbox</span>
   </div>
   <div class="hero-meta">
     <span>Requested by Chris Spagnuolo</span>
@@ -217,7 +218,7 @@
 
   <div class="content-card summary">
     <h2>What changed</h2>
-    <p>Two things shipped.</p>
+    <p>Three things shipped. Sample tags and managers on these shots are sandbox-only. The real list is still waiting on Chris.</p>
     <ul class="change-list">
       <li>
         <span class="change-check">&#10003;</span>
@@ -233,12 +234,19 @@
           <span class="detail">Everyone can see the field. Account Managers cannot edit yet, so hashtag spelling stays locked until the real list arrives.</span>
         </span>
       </li>
+      <li>
+        <span class="change-check">&#10003;</span>
+        <span class="change-text">
+          <span class="what">Two manager reports</span>
+          <span class="detail">AM Account Book groups agencies by Spark Account Manager. Account Tags Inventory is a simple list. Neither report filters on a tag yet.</span>
+        </span>
+      </li>
     </ul>
   </div>
 
   <div class="gallery-intro">
     <h2>See it in action</h2>
-    <p>This is the live screen. Click the image to enlarge. Tags are blank on purpose until the list arrives.</p>
+    <p>Each shot is from the sandbox. Click any image to enlarge. Tag values and manager names are sample data, not the production book.</p>
   </div>
 
   <figure class="shot">
@@ -246,25 +254,65 @@
       <div class="shot-number">1</div>
       <div class="shot-titles">
         <div class="shot-title">Account Tags on the agency page</div>
-        <div class="shot-subtitle">Details tab · System Information</div>
+        <div class="shot-subtitle">Details tab · System Information · UAT Test Agency</div>
       </div>
     </div>
     <div class="shot-look">
-      <strong>What to look for:</strong> Account Tags sits in the right column of System Information, under Last Modified By, next to Airtable Record Id. It is empty. The pencil means an admin can edit it.
+      <strong>What to look for:</strong> Account Tags sits in the right column of System Information, under Last Modified By. Sample values #Legacy and #Aug2026List are saved. The pencil means an admin can edit it.
     </div>
     <div class="shot-figure">
-      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/01-account-tags-system-information.png', 'Account Tags sits in System Information at the bottom of Details. Empty. An admin can edit.')">
-        <img src="screenshots/01-account-tags-system-information.png" alt="Agency record System Information showing Account Tags empty in production" loading="lazy">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/01-account-tags-system-information.png', 'Account Tags sits in System Information at the bottom of Details. Sample tags saved. An admin can edit.')">
+        <img src="screenshots/01-account-tags-system-information.png" alt="Agency record System Information showing Account Tags with sample hashtags" loading="lazy">
         <span class="zoom-hint">&#128269; Click to enlarge</span>
       </button>
-      <div class="shot-caption">System Information at the bottom of Details. Help icon and edit pencil are both present.</div>
+      <div class="shot-caption">System Information at the bottom of Details. Sample tags, help icon, and edit pencil.</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">2</div>
+      <div class="shot-titles">
+        <div class="shot-title">AM Account Book</div>
+        <div class="shot-subtitle">Account Management Reports · grouped by Spark Account Manager</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> Agencies group by Spark Account Manager: Chris Spagnuolo (4) and Jonathan Tang (4). Account Tags is a column, not a filter. Sample hashtags are filled so the report is readable.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/02-am-account-book.png', 'AM Account Book groups by Spark Account Manager. Account Tags is a column, not a filter. Sample tags filled.')">
+        <img src="screenshots/02-am-account-book.png" alt="AM Account Book grouped by Chris Spagnuolo and Jonathan Tang with sample Account Tags" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Eight test agencies in two manager groups. No tag filter applied.</div>
+    </div>
+  </figure>
+
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">3</div>
+      <div class="shot-titles">
+        <div class="shot-title">Account Tags Inventory</div>
+        <div class="shot-subtitle">Account Management Reports · simple list</div>
+      </div>
+    </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> A flat list of the same eight agencies. Spark Account Manager and Account Tags are both filled with sample values. No tag filter.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/03-account-tags-inventory.png', 'Inventory list with sample Account Tags and managers. No tag filter.')">
+        <img src="screenshots/03-account-tags-inventory.png" alt="Account Tags Inventory listing agencies with sample tags and managers" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Same eight agencies. Tags and managers are sample data.</div>
     </div>
   </figure>
 
   <div class="content-card">
     <h2>Where this stands</h2>
     <div class="callout callout-success">
-      <p><strong>Live in production.</strong> The field is on every agency. No tags have been filled yet.</p>
+      <p><strong>Live in production.</strong> The field is on every agency. The screenshots use sandbox sample data so the columns are readable.</p>
     </div>
     <div class="callout callout-info">
       <p><strong>No action needed.</strong> When you have the Account Manager roster (Kim vs Stephanie) and the matchable target account list, send them and we will fill the labels.</p>
@@ -274,7 +322,7 @@
 </div>
 
 <div class="footer-note">
-  Account tagging · Captured in production on August 13, 2026. For questions, contact Jonathan Tang.
+  Account tagging · Screenshots captured in a sandbox on August 13, 2026. The field is live in production. For questions, contact Jonathan Tang.
 </div>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged screenshot" onclick="closeLightbox()">
