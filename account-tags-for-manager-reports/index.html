@@ -225,7 +225,7 @@
         <span class="change-check">&#10003;</span>
         <span class="change-text">
           <span class="what">Account Tags field</span>
-          <span class="detail">A free-text box on each agency, parked at the bottom of System Information until the Monday layout work rehomes it.</span>
+          <span class="detail">A free-text box on each agency, at the bottom of System Information on the Details tab.</span>
         </span>
       </li>
       <li>
@@ -246,54 +246,74 @@
   </div>
 
   <div class="gallery-intro">
-    <h2>The evidence</h2>
-    <p>No screenshots on this page. Below is what was checked in the test environment, plus the click-throughs still waiting on you.</p>
+    <h2>See it in action</h2>
+    <p>Each shot is the real screen in the test environment. Click any image to enlarge. Tags are blank on purpose until the real list arrives.</p>
   </div>
 
-  <div class="evidence-block">
-    <h3>Before and after</h3>
-    <p class="evidence-detail">Agencies had no shared tag field. Manager reporting had nothing to filter on.</p>
-    <div class="ba-grid">
-      <div class="ba-cell before"><div class="ba-label">Before</div>No Account Tags field. No Account Management Reports folder.</div>
-      <div class="ba-cell after"><div class="ba-label">After</div>Account Tags exists. Two empty reports sit in Account Management Reports.</div>
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">1</div>
+      <div class="shot-titles">
+        <div class="shot-title">Account Tags on the agency page</div>
+        <div class="shot-subtitle">Details tab · System Information · UAT Test Agency</div>
+      </div>
     </div>
-  </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> Account Tags sits in the right column of System Information, under Last Modified By, next to Airtable Record Id. It is empty. The pencil means an admin can edit it.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/01-account-tags-system-information.png', 'Account Tags sits in System Information at the bottom of Details. Empty. An admin can edit.')">
+        <img src="screenshots/01-account-tags-system-information.png" alt="Agency record Details tab showing Account Tags empty in System Information" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">System Information at the bottom of Details. Help icon and edit pencil are both present.</div>
+    </div>
+  </figure>
 
-  <div class="evidence-block">
-    <h3>What we counted</h3>
-    <p class="evidence-detail">The test environment is small. Production lists are not loaded.</p>
-    <div class="metric-row">
-      <div class="metric"><div class="metric-value">8</div><div class="metric-label">Agencies in the test environment</div></div>
-      <div class="metric"><div class="metric-value">2</div><div class="metric-label">Empty reports created</div></div>
-      <div class="metric"><div class="metric-value">0</div><div class="metric-label">Agencies tagged (waiting on the list)</div></div>
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">2</div>
+      <div class="shot-titles">
+        <div class="shot-title">AM Account Book</div>
+        <div class="shot-subtitle">Account Management Reports · grouped by Spark Account Manager</div>
+      </div>
     </div>
-  </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> Agencies group by Spark Account Manager. Account Tags is a column, not a filter. Every tag cell is blank because lists are not loaded yet. The test environment has no managers assigned, so all eight agencies sit in one blank group.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/02-am-account-book.png', 'AM Account Book groups by Spark Account Manager. Account Tags is a column, not a filter. Tags blank on purpose.')">
+        <img src="screenshots/02-am-account-book.png" alt="AM Account Book report grouped by Spark Account Manager with a blank Account Tags column" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Eight test agencies. Tag column present. No tag filter applied.</div>
+    </div>
+  </figure>
 
-  <div class="evidence-block">
-    <h3>Test cases</h3>
-    <p class="evidence-detail">Imported from the UAT script. Report and permission checks were run. Typing a sample tag was not run, because filling tags is blocked until the real list arrives.</p>
-    <div class="table-wrapper">
-      <table>
-        <thead><tr><th>Scenario</th><th>Expected behavior</th><th>Result</th></tr></thead>
-        <tbody>
-          <tr><td>Admin can save a temporary value on Account Tags</td><td>The field saves a short test value with no error.</td><td>Not run (no sample tags until the real list arrives)</td></tr>
-          <tr><td>Clearing Account Tags saves a blank value</td><td>The field can be emptied and saved.</td><td>Not run (follows the save test)</td></tr>
-          <tr><td>Account Tags appears in System Information and is editable for an admin</td><td>The field is a free-text box at the bottom of System Information, not on the highlights panel.</td><td>Not run (needs a click on the agency page)</td></tr>
-          <tr><td>AM Account Book runs grouped by Spark Account Manager with no tag filter</td><td>The report runs. Tag text is a column, not a filter.</td><td class="result-pass">&#10003; Pass (8 agencies; one blank-manager group)</td></tr>
-          <tr><td>Account Tags Inventory lists agencies with the Account Tags column and no tag filter</td><td>Simple list report. Tag column present and currently blank.</td><td class="result-pass">&#10003; Pass</td></tr>
-          <tr><td>Account Managers cannot edit Account Tags yet</td><td>Admin edit only. The Account Management edit permission does not include this field.</td><td class="result-pass">&#10003; Pass</td></tr>
-          <tr><td>Spark Account Manager still displays on the agency page</td><td>The manager lookup is unchanged.</td><td>Not run (needs a click on the agency page)</td></tr>
-          <tr><td>FY27 Focus still displays in its existing section</td><td>Account Tags did not replace growth-plan fields.</td><td>Not run (needs a click on the agency page)</td></tr>
-        </tbody>
-      </table>
+  <figure class="shot">
+    <div class="shot-header">
+      <div class="shot-number">3</div>
+      <div class="shot-titles">
+        <div class="shot-title">Account Tags Inventory</div>
+        <div class="shot-subtitle">Account Management Reports · simple list</div>
+      </div>
     </div>
-    <p class="evidence-detail">Open in the test environment: <a href="https://sparkadvisors--sparkdev.sandbox.lightning.force.com/lightning/r/Account/001WI00001OaBt3YAF/view">UAT Test Agency</a> · <a href="https://sparkadvisors--sparkdev.sandbox.lightning.force.com/lightning/r/Report/00OWI0000068CtN2AU/view">AM Account Book</a> · <a href="https://sparkadvisors--sparkdev.sandbox.lightning.force.com/lightning/r/Report/00OWI0000068CtO2AU/view">Account Tags Inventory</a></p>
-  </div>
+    <div class="shot-look">
+      <strong>What to look for:</strong> A flat list of agencies with Account Tags as a column. Same blank tags. No tag filter.
+    </div>
+    <div class="shot-figure">
+      <button type="button" class="shot-zoom" onclick="openLightbox('screenshots/03-account-tags-inventory.png', 'Inventory list with Account Tags column blank. No tag filter.')">
+        <img src="screenshots/03-account-tags-inventory.png" alt="Account Tags Inventory report listing agencies with a blank Account Tags column" loading="lazy">
+        <span class="zoom-hint">&#128269; Click to enlarge</span>
+      </button>
+      <div class="shot-caption">Same eight agencies. Account Tags column is there and empty.</div>
+    </div>
+  </figure>
 
   <div class="content-card">
     <h2>Where this stands</h2>
     <div class="callout callout-success">
-      <p><strong>Tested in the test environment.</strong> The field and both empty reports exist. The manager-book report ran against all 8 test agencies. Tag values were not loaded, on purpose.</p>
+      <p><strong>Tested in the test environment.</strong> The field shows on the agency page. Both empty reports run. Tag values were not loaded, on purpose.</p>
     </div>
     <div class="callout callout-action">
       <p><strong>Action needed from you:</strong> Approve this first slice. Then send the Account Manager roster (Kim vs Stephanie) and the matchable target account list so we can fill tags and clone per-manager reports. Reply in this chat or on the 1:1 follow-up thread.</p>
